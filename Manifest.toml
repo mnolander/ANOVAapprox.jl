@@ -39,6 +39,11 @@ git-tree-sha1 = "008d6bc68dea6beb6303fdc37188cb557391ebf2"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
 version = "0.12.4"
 
+[[Combinatorics]]
+git-tree-sha1 = "08c8b6831dc00bfea825826be0bc8336fc369860"
+uuid = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
+version = "1.0.2"
+
 [[Compat]]
 deps = ["Base64", "Dates", "DelimitedFiles", "Distributed", "InteractiveUtils", "LibGit2", "Libdl", "LinearAlgebra", "Markdown", "Mmap", "Pkg", "Printf", "REPL", "Random", "SHA", "Serialization", "SharedArrays", "Sockets", "SparseArrays", "Statistics", "Test", "UUIDs", "Unicode"]
 git-tree-sha1 = "f76e41cf110de7176a657c72409e722cfc86fbb6"
@@ -142,6 +147,12 @@ version = "0.8.3"
 [[Grisu]]
 git-tree-sha1 = "03d381f65183cb2d0af8b3425fde97263ce9a995"
 uuid = "42e2da0e-8278-4e71-bc24-59509adca0fe"
+version = "1.0.0"
+
+[[GroupedTransforms]]
+deps = ["Combinatorics", "Distributed", "LinearMaps", "NFFT3"]
+git-tree-sha1 = "80756a560d6a9a690de2203947ca78b26c24d2e4"
+uuid = "76248ec8-aa36-4347-850f-ece2d673bc9f"
 version = "1.0.0"
 
 [[HTTP]]
@@ -265,6 +276,11 @@ version = "0.4.4"
 
 [[Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
+
+[[NFFT3]]
+git-tree-sha1 = "d288fe9b4e34cfc413919be57fa122e8f6cc1172"
+uuid = "53104703-03e8-40a5-ab01-812303a44cae"
+version = "1.0.0"
 
 [[NaNMath]]
 git-tree-sha1 = "c84c576296d0e2fbb3fc134d3e09086b3ea617cd"
