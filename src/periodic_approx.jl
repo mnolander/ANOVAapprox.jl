@@ -26,7 +26,7 @@ function periodic_approx( X::Matrix{Float64}, y::Vector{ComplexF64}, ds::Integer
     tmp[2:end] = N
     bandwidths = [ fill(tmp[length(u)+1], length(u)) for u in U ]
  
-    setting = [ (u = U[idx], mode = NFFTstuff, bandwidths = bandwidths[idx]) for idx in 1:length(U) ]
+    setting = [ (u = U[idx], mode = NFFTtools, bandwidths = bandwidths[idx]) for idx in 1:length(U) ]
     F = GroupedTransform(setting, X)
 
     if method == "lsqr"
@@ -51,7 +51,7 @@ function get_L2error( approx::periodic_approx, norm::Float64, fc_fun::Function, 
         end
             
         N = approx.N[length(u)]*ones(Int64, length(u))
-        I_hat = NFFTstuff.nfft_index_set_without_zeros(N)
+        I_hat = NFFTtools.nfft_index_set_without_zeros(N)
         I = zeros( Int64, size(approx.X, 1), (length(u) == 1) ? length(I_hat) : size(I_hat, 2))
         I[u,:] = I_hat 
 

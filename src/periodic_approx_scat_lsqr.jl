@@ -1,6 +1,3 @@
-using JLD2
-using FileIO
-
 mutable struct periodic_approx_scat_lsqr{d,ds} <: periodic_approx 
     X::Matrix{Float64}
     y::Vector{ComplexF64}

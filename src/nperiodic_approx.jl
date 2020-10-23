@@ -41,7 +41,7 @@ function nperiodic_approx( X::Matrix{Float64}, y::Vector{ComplexF64}, ds::Intege
     tmp[2:end] = N
     bandwidths = [ fill(tmp[length(u)+1], length(u)) for u in U ]
  
-    setting = [ (u = U[idx], mode = NFCTstuff, bandwidths = bandwidths[idx]) for idx in 1:length(U) ]
+    setting = [ (u = U[idx], mode = NFCTtools, bandwidths = bandwidths[idx]) for idx in 1:length(U) ]
     F = GroupedTransform(setting, X)
 
     if method == "lsqr"

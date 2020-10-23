@@ -1,6 +1,3 @@
-using JLD2
-using FileIO
-
 mutable struct nperiodic_approx_scat_lsqr{d,ds} <: nperiodic_approx 
     basis::String
     X::Matrix{Float64}

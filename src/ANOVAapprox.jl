@@ -19,7 +19,7 @@ function get_l2error( approx::fun_approx )
 end
 
 function get_GSI( approx::fun_approx, lambda::Float64 )::Vector{Float64}
-    norms = GroupedTransformations.norms( approx.fc[lambda] ).^2
+    norms = GroupedTransforms.norms( approx.fc[lambda] ).^2
     norms[1] = 0.0
     var = sum( norms )
     return norms ./ var

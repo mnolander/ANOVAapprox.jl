@@ -1,43 +1,32 @@
 using ANOVAapprox
+using Test
+using Random 
 
-# initialization ##################################################
+include("TestFunction.jl")
+
+using .TestFunction
 
 rng = MersenneTwister(1234)
 
-d = 5
-ds = 3
+d = 6
+ds = 2
 M = 10_000
-sigma = 0.1
 max_iter = 50
-bw = [ 2^8, 2^5, 2^3 ]
-λs = exp.(range(-2, 7, length = 30))
-sort!( λs, rev=true )
+bw = [ 100, 10 ]
+λs = [ 0.0, 1.0 ]
 
 X = rand( rng, d, M ) .- 0.5
 y = [ TestFunction.f(X[:,i]) for i = 1:M ]
 
-noise = zeros( Float64, M )
-if sigma > 0.0
-    noise = sigma*(maximum(y)-minimum(y))*randn(rng, Float64, M)
-end
-
-f = ANOVAapprox.periodic_approx( X, complex(y+noise), ds, bw; method = "lsqr" ) 
-
-# print setting ##################################################
-
-println("==== Approximation Test ====")
-println("d = ", d, ", ds = ", ds)
-println("M = ", M)
-println("sigma = ", sigma)
-println("max_iter = ", max_iter)
-println("N = ", bw)
-println("|Ids| = ", ANOVAapprox.get_NumFreq(f))
-println( "oversampling = ", M/ANOVAapprox.get_NumFreq(f) )
-
-# computations ##################################################
+f = ANOVAapprox.periodic_approx( X, complex(y), ds, bw; method = "lsqr" ) 
 
 ANOVAapprox.approximate(f, lambda=λs, max_iter=max_iter)
 
-# plotting ##################################################
+bw = [ 128, 32 ]
+f2 = ANOVAapprox.periodic_approx( X, complex(y), ds, bw; method = "lsqr", active_set=TestFunction.AS ) 
 
-ANOVAapprox.plot(f, :L2error, TestFunction.norm(), TestFunction.fc, :gsi, TestFunction.AS, :l2error) |> display
+ANOVAapprox.approximate(f2, lambda=λs, max_iter=max_iter)
+
+d = ANOVAapprox.get_L2error( f2, TestFunction.norm(), TestFunction.fc ) 
+
+@test d[0.0] < 5*10^(-3)

@@ -58,11 +58,11 @@ function b_spline_6( x::Float64 )::Float64
 	end
 end
 
-m1 = [ 1, 3, 8 ]
-m2 = [ 2, 5, 6 ]
-m3 = [ 4, 7, 9 ]
+m1 = [ 1, 3 ]
+m2 = [ 2, 5 ]
+m3 = [ 4, 6 ]
 
-AS = Vector{Vector{Int64}}(undef, 22)
+AS = Vector{Vector{Int64}}(undef, 10)
 AS[1] = []
 AS[2] = [1,]
 AS[3] = [2,]
@@ -70,25 +70,17 @@ AS[4] = [3,]
 AS[5] = [4,]
 AS[6] = [5,]
 AS[7] = [6,]
-AS[8] = [7,]
-AS[9] = [8,]
-AS[10] = [9,]
-AS[11] = [1,3]
-AS[12] = [1,8]
-AS[13] = [2,5]
-AS[14] = [2,6]
-AS[15] = [3,8]
-AS[16] = [4,7]
-AS[17] = [4,9]
-AS[18] = [5,6]
-AS[19] = [7,9]
-AS[20] = [ 1, 3, 8 ]
-AS[21] = [ 2, 5, 6 ]
-AS[22] = [ 4, 7, 9 ]
+AS[8] = [1,3]
+AS[9] = [2,5]
+AS[10] = [4,6]
 
 trans(x::Float64)::Float64 = x < 0 ? 1+x : x
 
 function f( x::Vector{Float64} )::Float64 
+	if length(x) != 6
+		error( "Argument has to be 6-dimensional" )
+	end
+
 	if !isempty( x[ (x .> .5) .| (x .< -.5 ) ] )
 		error( "The nodes have to be between -0.5 and 0.5." )
 	end
@@ -102,8 +94,8 @@ sinc( x::Float64 )::Float64 = ( x == 0.0 ) ? 1 : sin( x )/x
 b( k::Int64, r::Int64 )::Float64 = C[Integer(r/2)] * (sinc(pi*k/r))^r * cos( pi*k )
 
 function fc( k::Vector{Int64} )::Float64
-	if length(k) != 9 
-		error( "Index has to be 9-dimensional" )
+	if length(k) != 6 
+		error( "Index has to be 6-dimensional" )
 	end
 	
 	ind = map( ki -> ( ki == 0 ) ? 0 : 1, k )
@@ -120,7 +112,7 @@ function norm( )::Float64
 
 	for i = 1:2
 		for j = i+1:3
-			norm += 2*( b( 0, 2*i ) )^3 * ( b( 0, 2*j ) )^3
+			norm += 2*( b( 0, 2*i ) )^2 * ( b( 0, 2*j ) )^2
 		end
 	end
 
