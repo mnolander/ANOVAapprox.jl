@@ -12,7 +12,11 @@ mutable struct nperiodic_approx_scat_lsqr{d,ds} <: nperiodic_approx
     end 
 end
 
-function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=1.5, density::Function=identity )::Nothing where {d,ds}
+function const_one( x )::Float64
+   return 1.0 
+end
+
+function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=1.5, density::Function=const_one )::Nothing where {d,ds}
 
     what = sobolev_weights( approx.trafo.setting, smoothness=smoothness )
     M = size(approx.X,2)
