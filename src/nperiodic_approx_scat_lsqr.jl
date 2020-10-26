@@ -17,7 +17,7 @@ function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=
     what = sobolev_weights( approx.trafo.setting, smoothness=smoothness )
     M = size(approx.X,2)
     nf = get_NumFreq( approx )
-    dsqrt = [ sqrt(density(X[:,i])) for i in 1:M ]
+    dsqrt = [ sqrt(density(approx.X[:,i])) for i in 1:M ]
 
     for i = 1:length(lambda) 
         println( i, ". Lambda: ", lambda[i] )
