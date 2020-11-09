@@ -1,6 +1,3 @@
-"""
-  Bisection algorithm for getting a rough minimizer of a function
-"""
 function bisection(fun, fval, left, right, fleft, fright; max_iter = 10, tol = 1e-15, verbose = false)
   fright -= fval
   fleft -= fval
@@ -22,10 +19,6 @@ function bisection(fun, fval, left, right, fleft, fright; max_iter = 10, tol = 1
   return middle
 end
 
-
-"""
-  Newton's method for getting a minimizer of a function
-"""
 function newton(fun, dfun, fval, x; max_iter = 10, tol = 1e-15, verbose = false)
   for iter = 1:max_iter
     f = fun(x)
@@ -38,14 +31,6 @@ function newton(fun, dfun, fval, x; max_iter = 10, tol = 1e-15, verbose = false)
   return x
 end
 
-
-"""
-  Given the problem
-  ||x-y||_2^2+λ||x||_what^1
-  this function computes ξ such that
-  ||x-y||_2^2+ξ||x||_what^2
-  has the same minimizer (for which there is an explicit formula)
-"""
 function λ2ξ(λ, what, y; verbose = false)
   fun = ξ -> sum(abs.(what .* (y ./ (1/ξ .+ what)).^2 ))
   dfun = ξ -> 2*sum(abs.(what .* (y ./ (1/ξ .+ what)).^2 ./ (1/ξ .+ what)))*ξ^-2
@@ -73,10 +58,6 @@ function λ2ξ(λ, what, y; verbose = false)
   return ξ
 end
 
-
-"""
-  Fista algorithm (https://epubs.siam.org/doi/abs/10.1137/080716542)
-"""
 function fista!(ghat::GroupedCoeff, F::GroupedTransform, y::Vector{ComplexF64}, λ::Float64, what::GroupedCoeff; L = "adaptive", max_iter::Int = 25)
   adaptive = ( L == "adaptive" )
   if adaptive

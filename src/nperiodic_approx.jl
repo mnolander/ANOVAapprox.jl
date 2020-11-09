@@ -1,6 +1,7 @@
 abstract type nperiodic_approx <: fun_approx end
 
-function nperiodic_approx( X::Matrix{Float64}, y::Vector{ComplexF64}, ds::Integer, N::Vector{Int64}; method::String="lsqr", basis::String="cosine", active_set=false )::nperiodic_approx
+function nperiodic_approx( X_up::Matrix{Float64}, y::Vector{ComplexF64}, ds::Integer, N::Vector{Int64}; method::String="lsqr", basis::String="cosine", active_set=false )::nperiodic_approx
+    X = copy(X_up)
     d = size(X, 1)
     M = size(X, 2)
 
@@ -22,15 +23,13 @@ function nperiodic_approx( X::Matrix{Float64}, y::Vector{ComplexF64}, ds::Intege
         U = active_set
     end
 
+    if maximum(X) > 1.0 || minimum(X) < 0.0
+        error( "Your nodes have to be between zero and one.")
+    end
+
     if basis == "cosine"
-        if maximum(X) > 1.0 || minimum(X) < 0.0
-          error( "Your nodes have to be between zero and one.")
-        end
         X ./= 2.0
     elseif basis == "cheb"
-        if maximum(X) >= 1.0 || minimum(X) <= -1.0
-            error( "Your nodes have to be between minus one and one.")
-        end
         X = acos.( X )
         X ./= 2.0*pi
     else 
@@ -83,12 +82,23 @@ function get_L2error( approx::nperiodic_approx, norm::Float64, fc_fun::Function 
 end
 
 
-function evaluate( approx::nperiodic_approx, X::Matrix{Float64}, lambda::Float64 )::Vector{ComplexF64}
+function evaluate( approx::nperiodic_approx, X_up::Matrix{Float64}, lambda::Float64 )::Vector{ComplexF64}
+    X = copy(X_up)
+
     if size(X,1) != size(approx.X,1)
         error( "Matrix size mismatch." )
     end
 
-    F = GroupedTransform(approx.trafo.setting, X./2)
+    if approx.basis == "cosine"
+        X ./= 2.0
+    elseif approx.basis == "cheb"
+        X = acos.( X )
+        X ./= 2.0*pi
+    else 
+        error("basis not implemented yet")
+    end
+
+    F = GroupedTransform(approx.trafo.setting, X)
     fc = approx.fc[lambda]
 
     return F*fc
