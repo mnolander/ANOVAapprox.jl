@@ -1,5 +1,3 @@
-include("fista.jl")
-
 mutable struct nperiodic_approx_scat_fista{d,ds} <: nperiodic_approx 
   basis::String
   X::Matrix{Float64}

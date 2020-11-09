@@ -71,6 +71,7 @@ function get_ActiveSet( approx::fun_approx, eps::Vector{Float64} )
     return as
 end
 
+include( "fista.jl" )
 include( "periodic_approx.jl" )
 include( "periodic_approx_scat_lsqr.jl" )
 include( "periodic_approx_scat_fista.jl" )

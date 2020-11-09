@@ -1,5 +1,3 @@
-include("fista.jl")
-
 mutable struct periodic_approx_scat_fista{d,ds} <: periodic_approx 
   X::Matrix{Float64}
   y::Vector{ComplexF64}
