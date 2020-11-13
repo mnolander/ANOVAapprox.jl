@@ -30,6 +30,8 @@ function nperiodic_approx( X_up::Matrix{Float64}, y::Vector{ComplexF64}, ds::Int
     if basis == "cosine"
         X ./= 2.0
     elseif basis == "cheb"
+        X .*= 2.0
+        X .-= 1.0
         X = acos.( X )
         X ./= 2.0*pi
     else 
@@ -92,6 +94,8 @@ function evaluate( approx::nperiodic_approx, X_up::Matrix{Float64}, lambda::Floa
     if approx.basis == "cosine"
         X ./= 2.0
     elseif approx.basis == "cheb"
+        X .*= 2.0
+        X .-= 1.0
         X = acos.( X )
         X ./= 2.0*pi
     else 
