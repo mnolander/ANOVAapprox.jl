@@ -33,7 +33,7 @@ function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=
             size(approx.X, 2)+nf, nf )
 
         tmp = zeros( ComplexF64, nf )
-        lsqr!( tmp, F_vec, vcat(approx.y,zeros(ComplexF64,nf)), maxiter = max_iter, verbose=true )    
+        lsqr!( tmp, F_vec, vcat(dsqrt .* approx.y,zeros(ComplexF64,nf)), maxiter = max_iter, verbose=true )    
         approx.fc[lambda[i]] = GroupedCoeff(approx.trafo.setting, tmp)
     end
 
