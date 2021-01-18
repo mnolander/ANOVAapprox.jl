@@ -16,7 +16,7 @@ function const_one( x )::Float64
    return 1.0 
 end
 
-function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=1.5, density::Function=const_one )::Nothing where {d,ds}
+function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=1.5, density::Function=const_one, verbose::Bool=false )::Nothing where {d,ds}
 
     what = sobolev_weights( approx.trafo.setting, smoothness=smoothness )
     M = size(approx.X,2)
@@ -33,7 +33,7 @@ function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=
             size(approx.X, 2)+nf, nf )
 
         tmp = zeros( ComplexF64, nf )
-        lsqr!( tmp, F_vec, vcat(dsqrt .* approx.y,zeros(ComplexF64,nf)), maxiter = max_iter, verbose=true )    
+        lsqr!( tmp, F_vec, vcat(dsqrt .* approx.y,zeros(ComplexF64,nf)), maxiter = max_iter, verbose=verbose )    
         approx.fc[lambda[i]] = GroupedCoeff(approx.trafo.setting, tmp)
     end
 
