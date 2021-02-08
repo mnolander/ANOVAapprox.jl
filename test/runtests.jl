@@ -30,3 +30,9 @@ ANOVAapprox.approximate(f2, lambda=λs, max_iter=max_iter)
 d = ANOVAapprox.get_L2error( f2, TestFunction.norm(), TestFunction.fc ) 
 
 @test d[0.0] < 5*10^(-3)
+
+X = rand( rng, d, M ) .- 0.5
+y = [ TestFunction.f(X[:,i]) for i = 1:M ]
+X +.= 0.5
+f = ANOVAapprox.nperiodic_approx( X, complex(y), ds, bw; method = "lsqr" ) 
+ANOVAapprox.approximate(f, lambda=λs, max_iter=10)

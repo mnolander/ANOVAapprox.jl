@@ -1,6 +1,8 @@
 abstract type nperiodic_approx <: fun_approx end
 
-function nperiodic_approx( X_up::Matrix{Float64}, y::Vector{ComplexF64}, ds::Integer, N::Vector{Int64}; method::String="lsqr", basis::String="cosine", active_set=false )::nperiodic_approx
+bw_vec = Union{Vector{Int64},Vector{Vector{Int64}}}
+
+function nperiodic_approx( X_up::Matrix{Float64}, y::Vector{ComplexF64}, ds::Integer, N::bw_vec; method::String="lsqr", basis::String="cosine", active_set=false )::nperiodic_approx
     X = copy(X_up)
     d = size(X, 1)
     M = size(X, 2)
@@ -38,9 +40,25 @@ function nperiodic_approx( X_up::Matrix{Float64}, y::Vector{ComplexF64}, ds::Int
         error("basis not implemented yet")
     end
 
-    tmp = zeros( Int64, ds+1 )
-    tmp[2:end] = N
-    bandwidths = [ fill(tmp[length(u)+1], length(u)) for u in U ]
+    if isa( N, Vector{Vector{Int64}} )
+        if length(U) == length(N) 
+            bandwidths = N
+            for i = 1:length(U)
+                if length(U[i]) != length(N[i])
+                    error( "bw single length mismatch" )
+                end
+            end
+        else 
+            error( "bw length mismatch" )
+        end
+    else
+        if length(N) != ds 
+            error( "bw length mismatch" )
+        end
+        tmp = zeros( Int64, ds+1 )
+        tmp[2:end] = N
+        bandwidths = [ fill(tmp[length(u)+1], length(u)) for u in U ]
+    end
  
     setting = [ (u = U[idx], mode = NFCTtools, bandwidths = bandwidths[idx]) for idx in 1:length(U) ]
     F = GroupedTransform(setting, X)
