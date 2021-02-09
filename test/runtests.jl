@@ -31,10 +31,22 @@ d = ANOVAapprox.get_L2error( f2, TestFunction.norm(), TestFunction.fc )
 
 @test d[0.0] < 5*10^(-3)
 
+bw = [ 128, 10 ]
+U = TestFunction.AS
+N = Vector{Vector{Int64}}(undef, length(U))
+
+for i = 1:length(U)
+    if U[i] == [] 
+        N[i] = [] 
+    else 
+        N[i] = fill( bw[length(U[i])], length(U[i]) )
+    end
+end
+
 d = 6
 X = rand( rng, d, M ) .- 0.5
 y = [ TestFunction.f(X[:,i]) for i = 1:M ]
 X .+= 0.5
-bw = [ 128, 10 ]
-f = ANOVAapprox.nperiodic_approx( X, complex(y), ds, bw; method = "lsqr" ) 
+
+f = ANOVAapprox.nperiodic_approx( X, complex(y), ds, N; method = "lsqr" ) 
 ANOVAapprox.approximate(f, lambda=λs, max_iter=10)

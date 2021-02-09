@@ -4,10 +4,10 @@ mutable struct nperiodic_approx_scat_lsqr{d,ds} <: nperiodic_approx
     y::Vector{ComplexF64}
     U::Vector{Vector{Int64}}
     trafo::GroupedTransform
-    N::Vector{Int64}
+    N::Union{Vector{Int64},Vector{Vector{Int64}}}
     fc::Dict{Float64,GroupedCoeff}
 
-    function nperiodic_approx_scat_lsqr{d,ds}( basis::String, X::Matrix{Float64}, y::Vector{ComplexF64}, U::Vector{Vector{Int64}}, trafo::GroupedTransform, N::Vector{Int64} ) where {d,ds}
+    function nperiodic_approx_scat_lsqr{d,ds}( basis::String, X::Matrix{Float64}, y::Vector{ComplexF64}, U::Vector{Vector{Int64}}, trafo::GroupedTransform, N::Union{Vector{Int64},Vector{Vector{Int64}}} ) where {d,ds}
         return new( basis, X, y, U, trafo, N, Dict{Float64,GroupedCoeff}() )
     end
 end
