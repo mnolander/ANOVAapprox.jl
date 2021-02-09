@@ -15,10 +15,6 @@ function nperiodic_approx( X_up::Matrix{Float64}, y::Vector{ComplexF64}, ds::Int
         error( "Superposition dimension mismatch." )
     end
 
-    if length(N) != ds 
-        error( "Bandwidths length mismatch." )
-    end
-
     if active_set == false
         U = get_superposition_set(d, ds)
     else
