@@ -48,5 +48,5 @@ X = rand( rng, d, M ) .- 0.5
 y = [ TestFunction.f(X[:,i]) for i = 1:M ]
 X .+= 0.5
 
-f = ANOVAapprox.nperiodic_approx( X, complex(y), ds, N; method = "lsqr" ) 
+f = ANOVAapprox.nperiodic_approx( X, complex(y), ds, N; method = "lsqr", active_set=TestFunction.AS ) 
 ANOVAapprox.approximate(f, lambda=λs, max_iter=10)
