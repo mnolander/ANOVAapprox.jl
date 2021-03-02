@@ -68,15 +68,8 @@ noise_test = rand( dist, M_test )
 y_train = [ f1(X_train[:,i])+noise_train[i] for i = 1:M_train ]
 y_test = [ f1(X_test[:,i])+noise_test[i] for i = 1:M_test ]
 
-fun_approx = ANOVAapprox.nperiodic_approx( X_train, complex(y_train), 2, [8,4]; active_set=f1_active_set )
-ANOVAapprox.approximate(fun_approx, smoothness=0.0, max_iter=1000, lambda=[0.0,], verbose=true)
-y_test_approx = ANOVAapprox.evaluate( fun_approx, X_test )[0.0]
-mse = 0.0
+N = Dict( 1 => [8,4], 2 => [10, 4] )
+mses = ANOVAapprox.testBandwidths( X_train, complex(y_train), X_test, complex(y_test), ds, N; active_set=f1_active_set, verbose=true )
+min_mses = findmin(mses)
 
-for i = 1:length(y_test_approx)
-    global mse += abs( y_test_approx[i] - y_test[i] )^2
-end
-
-mse /= length(y_test)
-
-@test mse < 1.3
+@test min_mses[1] < 1.3

@@ -39,7 +39,7 @@ function scaleCoeffs( approx::nperiodic_approx_scat_lsqr{d,ds}, c::Vector{Comple
     end
 end
 
-function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=1.5, density::Function=const_one, verbose::Bool=false )::Nothing where {d,ds}
+function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=0.0, density::Function=const_one, verbose::Bool=false )::Nothing where {d,ds}
 
     what = sobolev_weights( approx.trafo.setting, smoothness=smoothness )
     M = size(approx.X,2)

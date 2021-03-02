@@ -81,7 +81,7 @@ function get_ActiveSet( approx::fun_approx, eps::Vector{Float64} )
     return as
 end
 
-function get_AttributeRanking( approx::fun_approx )::Vector{Float64}
+function get_AttributeRanking( approx::fun_approx )
     return Dict( λ => get_AttributeRanking(approx, λ) for λ in collect(keys(approx.fc)) )
 end
 
@@ -101,6 +101,26 @@ function get_AttributeRanking( approx::fun_approx, lambda::Float64 )::Vector{Flo
     end
 
     return r
+end
+
+function get_MSE( approx::fun_approx, X::Matrix{Float64}, y::Vector{ComplexF64}; data_trafo=false )
+    return Dict( λ => get_MSE(approx, X, y, λ, data_trafo=data_trafo) for λ in collect(keys(approx.fc)) )
+end
+
+function get_MSE( approx::fun_approx, X::Matrix{Float64}, y::Vector{ComplexF64}, lambda::Float64; data_trafo=false )::Float64
+    y_test_approx = evaluate( approx, X )[lambda]
+
+    if data_trafo != false 
+        y_test_approx = StatsBase.reconstruct( data_trafo, real(y_test_approx) )
+    end
+
+    mse = 0.0
+    
+    for i = 1:length(y_test_approx)
+        mse += abs( y_test_approx[i] - y[i] )^2
+    end
+
+    return mse/length(y_test_approx)
 end
 
 include( "fista.jl" )

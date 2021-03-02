@@ -123,3 +123,22 @@ end
 function evaluate( approx::nperiodic_approx, X::Matrix{Float64} )
     return Dict( λ => evaluate(approx, X, λ) for λ in collect(keys(approx.fc)))
 end
+
+function testBandwidths( X_train::Matrix{Float64}, y_train::Vector{ComplexF64}, X_test::Matrix{Float64}, y_test::Vector{ComplexF64}, ds::Integer, N; method::String="lsqr", basis::String="cosine", active_set=false, smoothness::Float64=0.0, max_iter::Int64=1000, lambda::Vector{Float64}=[0.0,], verbose::Bool=false, data_trafo=false )
+
+    mses_bw = Dict()
+
+    for i in collect(keys(N))
+        if !isa(N[i], bw_vec)
+            error( "type mismatch" )
+        end
+        f = nperiodic_approx( X_train, y_train, ds, N[i]; method=method, basis=basis, active_set=active_set )
+        approximate(f, smoothness=smoothness, max_iter=max_iter, lambda=lambda, verbose=verbose)
+        mse = get_MSE( f, X_test, y_test, data_trafo=data_trafo )
+        min_mse = findmin(mse)
+        mses_bw[ (N[i], min_mse[2]) ] = min_mse[1]
+    end
+
+    return mses_bw
+
+end
