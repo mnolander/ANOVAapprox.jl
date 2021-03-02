@@ -18,15 +18,25 @@ function get_l2error( approx::fun_approx )
     return Dict( λ => get_l2error(approx, λ) for λ in collect(keys(approx.fc)))
 end
 
-function get_GSI( approx::fun_approx, lambda::Float64 )::Vector{Float64}
+function get_GSI( approx::fun_approx, lambda::Float64; dict=false )
     norms = GroupedTransforms.norms( approx.fc[lambda] ).^2
     norms[1] = 0.0
     var = sum( norms )
-    return norms ./ var
+    gsi = norms ./ var
+
+    if dict == true 
+        gsis_d = Dict()
+        for i = 1:length(approx.U)
+            u = approx.U[i]
+            gsis_d[u] = gsi[i]
+        end
+    end
+
+    return ( (dict == false) ? gsi : gsi_d )
 end
 
-function get_GSI( approx::fun_approx )
-    return Dict( λ => get_GSI(approx, λ) for λ in collect(keys(approx.fc)) )
+function get_GSI( approx::fun_approx; dict=false )
+    return Dict( λ => get_GSI(approx, λ, dict=dict) for λ in collect(keys(approx.fc)) )
 end
 
 function get_NumFreq( approx::fun_approx )::Int 
@@ -69,6 +79,28 @@ function get_ActiveSet( approx::fun_approx, eps::Vector{Float64} )
         as[lambda] = as_lambda[1:j-1]
     end
     return as
+end
+
+function get_AttributeRanking( approx::fun_approx )::Vector{Float64}
+    return Dict( λ => get_AttributeRanking(approx, λ) for λ in collect(keys(approx.fc)) )
+end
+
+function get_AttributeRanking( approx::fun_approx, lambda::Float64 )::Vector{Float64}
+    gsi = get_GSI(approx)[lambda]
+    d = size(approx.X, 1)
+    r = zeros(d)
+
+    for i = 1:length(approx.U)
+        u = approx.U[i]
+        if u == []
+            continue
+        end
+        for s in u
+            r[s] += gsi[i]/length(u)
+        end
+    end
+
+    return r
 end
 
 include( "fista.jl" )
