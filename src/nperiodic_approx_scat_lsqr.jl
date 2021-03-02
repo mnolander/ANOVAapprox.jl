@@ -16,7 +16,7 @@ function const_one( x )::Float64
    return 1.0
 end
 
-function scaleCoeffs( approx::nperiodic_approx_scat_lsqr{d,ds}, c::Vector{ComplexF64} )::Vector{ComplexF64}
+function scaleCoeffs( approx::nperiodic_approx_scat_lsqr{d,ds}, c::Vector{ComplexF64} )::Vector{ComplexF64} where {d,ds}
     fc = GroupedCoeff(approx.trafo.setting, c)
     for u in approx.U 
         if u != []
