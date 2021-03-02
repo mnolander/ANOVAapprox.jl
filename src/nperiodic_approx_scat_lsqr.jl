@@ -16,14 +16,27 @@ function const_one( x )::Float64
    return 1.0
 end
 
-function scaleCoeffs( approx::nperiodic_approx_scat_lsqr{d,ds}, c::Vector{ComplexF64} )::Vector{ComplexF64} where {d,ds}
-    fc = GroupedCoeff(approx.trafo.setting, c)
+function scaleCoefficients( approx::nperiodic_approx_scat_lsqr{d,ds}, c::Vector{ComplexF64} )::GroupedCoeff where {d,ds}
+    cp = copy(c)
+    fc = GroupedCoeff(approx.trafo.setting, cp)
+
     for u in approx.U 
         if u != []
             fc[u] = fc[u] .* (sqrt(2)^length(u))
         end
     end
-    return fc.data
+
+    return fc
+end
+
+function scaleCoeffs( approx::nperiodic_approx_scat_lsqr{d,ds}, c::Vector{ComplexF64}; res::Integer=0 ) where {d,ds}
+    fc = scaleCoefficients( approx, c )
+
+    if res == 0 
+        return fc 
+    else 
+        return fc.data 
+    end
 end
 
 function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=1.5, density::Function=const_one, verbose::Bool=false )::Nothing where {d,ds}
@@ -40,8 +53,8 @@ function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=
         wsqrt = sqrt(lambda[i]).*(sqrt.(vec(what)))
 
         F_vec = LinearMap{ComplexF64}(
-            fhat -> vcat( dsqrt.*(approx.trafo*GroupedCoeff(approx.trafo.setting, scaleCoeffs( approx, fhat ))), wsqrt .* scaleCoeffs( approx, fhat ) ),
-            f -> scaleCoeffs(approx, vec(approx.trafo'*(dsqrt.*f[1:M])))+wsqrt.*f[M+1:end],
+            fhat -> vcat( dsqrt.*(approx.trafo*scaleCoeffs( approx, fhat )), wsqrt .* scaleCoeffs( approx, fhat; res=1 ) ),
+            f -> scaleCoeffs(approx, vec(approx.trafo'*(dsqrt.*f[1:M])), res=1)+wsqrt.*f[M+1:end],
             size(approx.X, 2)+nf, nf )
 
         tmp = zeros( ComplexF64, nf )

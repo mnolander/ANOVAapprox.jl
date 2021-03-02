@@ -117,13 +117,7 @@ function evaluate( approx::nperiodic_approx, X_up::Matrix{Float64}, lambda::Floa
     end
 
     F = GroupedTransform(approx.trafo.setting, X)
-    nf = get_NumFreq( approx )
-    F_vec = LinearMap{ComplexF64}(
-            fhat -> F*GroupedCoeff(F.setting, scaleCoeffs( approx, fhat )),
-            f -> scaleCoeffs(approx, vec(F'*f)),
-            size(approx.X, 2), nf )
-
-    return F_vec*(approx.fc[lambda].data)
+    return F*scaleCoeffs( approx, approx.fc[lambda].data )
 end
 
 function evaluate( approx::nperiodic_approx, X::Matrix{Float64} )
