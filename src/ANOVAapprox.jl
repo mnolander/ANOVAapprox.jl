@@ -32,7 +32,7 @@ function get_GSI( approx::fun_approx, lambda::Float64; dict=false )
         end
     end
 
-    return ( (dict == false) ? gsi : gsi_d )
+    return ( (dict == false) ? gsi : gsis_d )
 end
 
 function get_GSI( approx::fun_approx; dict=false )

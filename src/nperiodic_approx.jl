@@ -129,14 +129,17 @@ function testBandwidths( X_train::Matrix{Float64}, y_train::Vector{ComplexF64}, 
     mses_bw = Dict()
 
     for i in collect(keys(N))
+
         if !isa(N[i], bw_vec)
             error( "type mismatch" )
         end
+
         f = nperiodic_approx( X_train, y_train, ds, N[i]; method=method, basis=basis, active_set=active_set )
         approximate(f, smoothness=smoothness, max_iter=max_iter, lambda=lambda, verbose=verbose)
         mse = get_MSE( f, X_test, y_test, data_trafo=data_trafo )
         min_mse = findmin(mse)
         mses_bw[ (N[i], min_mse[2]) ] = min_mse[1]
+        
     end
 
     return mses_bw
