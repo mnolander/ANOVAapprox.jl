@@ -1,6 +1,7 @@
 module ANOVAapprox
 
 using GroupedTransforms
+using StatsBase
 using LinearAlgebra, IterativeSolvers, LinearMaps, Plots, Distributed
 
 abstract type fun_approx end
