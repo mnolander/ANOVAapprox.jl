@@ -28,6 +28,8 @@ a2 = ANOVAapprox.periodic_approx( X, complex(y), ds, bw; method = "lsqr", active
 
 ANOVAapprox.approximate(a2, lambda=λs, max_iter=max_iter)
 
+ANOVAapprox.get_AttributeRanking( a2 )
+
 d = ANOVAapprox.get_L2error( a2, TestFunction.norm(), TestFunction.fc ) 
 
 @test d[0.0] < 5*10^(-3)

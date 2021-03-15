@@ -1,7 +1,7 @@
 name = "ANOVAapprox"
 uuid = "5e027bd6-ab01-4733-8320-e0223e929ebb"
 authors = ["Michael Schmischke <michael.schmischke@math.tu-chemnitz.de> and Felix Bartel <felix.bartel@math.tu-chemnitz.de>"]
-version = "1.0.14"
+version = "1.0.15"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
