@@ -91,13 +91,31 @@ function get_AttributeRanking( approx::fun_approx, lambda::Float64 )::Vector{Flo
     d = size(approx.X, 1)
     r = zeros(d)
     nf = 0.0
+    lengths = [ length(approx.U[i]) for i = 2:length(approx.U) ]
+    ds = maximum(lengths)
+
+    factors = zeros( d, ds )
+
+    for i = 1:d 
+        for j = 1:ds 
+            for k = 1:length(approx.U)
+                if (i in approx.U[k]) && (length(approx.U[k]) == j)
+                    factors[i,j] += 1
+                end
+            end
+        end
+    end
 
     for i = 1:length(approx.U)
         u = approx.U[i]
         if u == []
             continue
         end
-        nf += gsi[i] * 1/(binomial(d,length(u)))
+        nfi = 0.0 
+        for j in u 
+            nfi += 1/factors[j,length(u)]
+        end
+        nf += gsi[i] * nfi
     end
 
     for i = 1:length(approx.U)
@@ -106,11 +124,11 @@ function get_AttributeRanking( approx::fun_approx, lambda::Float64 )::Vector{Flo
             continue
         end
         for s in u
-            r[s] += 1/(binomial(d-1,length(u)-1)) * gsi[i]
+            r[s] += 1/factors[s,length(u)] * gsi[i]
         end
     end
 
-    r ./= d*nf
+    r ./= nf
 
     return r
 end
