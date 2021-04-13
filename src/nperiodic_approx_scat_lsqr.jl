@@ -12,8 +12,8 @@ mutable struct nperiodic_approx_scat_lsqr{d,ds} <: nperiodic_approx
     end
 end
 
-function const_one( x )::Float64
-   return 1.0
+function cheb_density( x::Vector{Float64} )::Float64
+   return prod( xs -> 1/sqrt(1-xs^2), x )
 end
 
 function scaleCoefficients( approx::nperiodic_approx_scat_lsqr{d,ds}, c::Vector{ComplexF64} )::GroupedCoeff where {d,ds}
@@ -39,16 +39,21 @@ function scaleCoeffs( approx::nperiodic_approx_scat_lsqr{d,ds}, c::Vector{Comple
     end
 end
 
-function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=0.0, density::Function=const_one, verbose::Bool=false )::Nothing where {d,ds}
+function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=0.0, precondition::Bool=true, verbose::Bool=false )::Nothing where {d,ds}
 
     what = sobolev_weights( approx.trafo.setting, smoothness=smoothness )
     M = size(approx.X,2)
     nf = get_NumFreq( approx )
-    dsqrt = [ sqrt(density(approx.X[:,i])) for i in 1:M ]
+
+    if ( approx.basis == "cheb" ) && precondition
+        dsqrt = [ sqrt(cheb_density(approx.X[:,i])) for i in 1:M ]
+    else 
+        dsqrt = ones( M )
+    end
 
     for i = 1:length(lambda)
         if verbose
-            println( i, ". Lambda: ", lambda[i] )
+            println( "lambda = ", lambda[i] )
         end
         wsqrt = sqrt(lambda[i]).*(sqrt.(vec(what)))
 

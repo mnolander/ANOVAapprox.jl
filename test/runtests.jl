@@ -69,7 +69,17 @@ y_train = [ f1(X_train[:,i])+noise_train[i] for i = 1:M_train ]
 y_test = [ f1(X_test[:,i])+noise_test[i] for i = 1:M_test ]
 
 N = Dict( 1 => [8,4], 2 => [10, 4] )
-mses = ANOVAapprox.testBandwidths( X_train, complex(y_train), X_test, complex(y_test), ds, N; active_set=f1_active_set, verbose=true )
+mses = ANOVAapprox.testBandwidths( X_train, complex(y_train), X_test, complex(y_test), ds, N; active_set=f1_active_set, verbose=false )
 min_mses = findmin(mses)
+
+println(min_mses)
+
+@test min_mses[1] < 1.3
+
+N = Dict( 1 => [8,4], 2 => [10, 4] )
+mses = ANOVAapprox.testBandwidths( X_train, complex(y_train), X_test, complex(y_test), ds, N; basis="cheb", active_set=f1_active_set, verbose=false )
+min_mses = findmin(mses)
+
+println(min_mses)
 
 @test min_mses[1] < 1.3
