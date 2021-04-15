@@ -81,7 +81,7 @@ function get_L2error( approx::nperiodic_approx, norm::Float64, fc_fun::Function,
         end
             
         N = approx.N[length(u)]*ones(Int64, length(u))
-        I_hat = NFFTstuff.nfft_index_set_without_zeros(N)
+        I_hat = GroupedTransforms.NFCTstuff.nfft_index_set_without_zeros(N)
         I = zeros( Int64, size(approx.X, 1), (length(u) == 1) ? length(I_hat) : size(I_hat, 2))
         I[u,:] = I_hat 
 
