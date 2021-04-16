@@ -16,30 +16,57 @@ function cheb_density( x::Vector{Float64} )::Float64
    return prod( xs -> 1/sqrt(1-xs^2), x )
 end
 
-function scaleCoefficients( approx::nperiodic_approx_scat_lsqr{d,ds}, c::Vector{ComplexF64} )::GroupedCoeff where {d,ds}
-    cp = copy(c)
-    fc = GroupedCoeff(approx.trafo.setting, cp)
+function getScalingVector( approx::nperiodic_approx_scat_lsqr{d,ds} )::Vector{Float64} where {d,ds}
+    scalingVector = ones( Float64, get_NumFreq( approx ) )
+    index = 2
 
-    for u in approx.U 
-        if u != []
-            fc[u] = fc[u] .* (sqrt(2)^length(u))
-        end
+    for (idx, s) in enumerate(approx.trafo.setting)
+        if s[:u] == []
+            continue 
+        end 
+
+        datalength = GroupedTransforms.NFCTtools.datalength( s[:bandwidths] )
+        scalingVector[index:index-1+datalength] .*= sqrt(2)^length(s[:u])
+        index += datalength
     end
 
-    return fc
+    return scalingVector
 end
 
-function scaleCoeffs( approx::nperiodic_approx_scat_lsqr{d,ds}, c::Vector{ComplexF64}; res::Integer=0 ) where {d,ds}
-    fc = scaleCoefficients( approx, c )
+function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=0.0, precondition::Bool=true, verbose::Bool=false ) where {d,ds}
+    if smoothness != 0.0 
+        return approximate_old( approx; max_iter=max_iter, lambda=lambda, smoothness=smoothness, precondition=precondition, verbose=verbose )
+    end
 
-    if res == 0 
-        return fc 
+    M = size(approx.X, 2)
+    n = get_NumFreq( approx )
+    scalingVector = getScalingVector( approx )
+
+    if ( approx.basis == "cheb" ) && precondition
+        W = [ sqrt(cheb_density(approx.X[:,i])) for i in 1:M ]
     else 
-        return fc.data 
+        W = ones( M )
     end
+
+    for L in lambda 
+        if verbose
+            println( "lambda = ", L )
+        end
+
+        F = LinearMap{ComplexF64}(
+            fhat -> W.*(approx.trafo*GroupedCoeff(approx.trafo.setting, scalingVector.*fhat)),
+            f -> scalingVector.*vec(approx.trafo'*(W.*f)),
+            M, n )
+
+        tmp = zeros( ComplexF64, n )
+        lsqr!( tmp, F, W .* approx.y, maxiter = max_iter, verbose=verbose, damp=sqrt(L) )
+        approx.fc[L] = GroupedCoeff(approx.trafo.setting, tmp)
+    end
+
+    return
 end
 
-function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=0.0, precondition::Bool=true, verbose::Bool=false )::Nothing where {d,ds}
+function approximate_old( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=0.0, precondition::Bool=true, verbose::Bool=false )::Nothing where {d,ds}
 
     what = sobolev_weights( approx.trafo.setting, smoothness=smoothness )
     M = size(approx.X,2)
@@ -50,7 +77,7 @@ function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=
     else 
         dsqrt = ones( M )
     end
-
+    scalingVector = getScalingVector( approx )
     for i = 1:length(lambda)
         if verbose
             println( "lambda = ", lambda[i] )
@@ -58,8 +85,8 @@ function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=
         wsqrt = sqrt(lambda[i]).*(sqrt.(vec(what)))
 
         F_vec = LinearMap{ComplexF64}(
-            fhat -> vcat( dsqrt.*(approx.trafo*scaleCoeffs( approx, fhat )), wsqrt .* scaleCoeffs( approx, fhat; res=1 ) ),
-            f -> scaleCoeffs(approx, vec(approx.trafo'*(dsqrt.*f[1:M])), res=1)+wsqrt.*f[M+1:end],
+            fhat -> vcat( dsqrt.*(approx.trafo*GroupedCoeff(approx.trafo.setting, scalingVector.*fhat)), wsqrt .* (scalingVector.*fhat) ),
+            f -> scalingVector.*(approx, vec(approx.trafo'*(dsqrt.*f[1:M])))+wsqrt.*f[M+1:end],
             size(approx.X, 2)+nf, nf )
 
         tmp = zeros( ComplexF64, nf )

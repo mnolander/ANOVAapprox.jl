@@ -68,29 +68,35 @@ function nperiodic_approx( X_up::Matrix{Float64}, y::Vector{ComplexF64}, ds::Int
     end
 end
 
-function get_L2error( approx::nperiodic_approx, norm::Float64, fc_fun::Function, lambda::Float64 ) 
-    err2 = norm^2
+function getIndexSet( approx::nperiodic_approx )
+    I = zeros( Int64, size(approx.X,1), 1 )
 
-    for j = 1:length(approx.U)
-        u = approx.U[j]
-
-        if u == []
-            k = zeros(Int64, size(approx.X, 1))
-            err2 += abs(fc_fun(k) - (approx.fc[lambda])[u][1])^2 - abs( fc_fun(k) )^2
-            continue
-        end
-            
-        N = approx.N[length(u)]*ones(Int64, length(u))
-        I_hat = GroupedTransforms.NFCTstuff.nfft_index_set_without_zeros(N)
-        I = zeros( Int64, size(approx.X, 1), (length(u) == 1) ? length(I_hat) : size(I_hat, 2))
-        I[u,:] = I_hat 
-
-        for i = 1:size(I, 2)
-            err2 += abs(fc_fun(I[:,i]) - (approx.fc[lambda])[u][i])^2 - abs( fc_fun(I[:,i]) )^2
-        end
+    for (idx, s) in enumerate(approx.trafo.setting)
+        if s[:u] == []
+            continue 
+        end 
+        I_hat = GroupedTransforms.NFCTtools.nfct_index_set_without_zeros(s[:bandwidths])
+        I_hat_2 = zeros( Int64, size(approx.X,1), ( length(s[:u]) == 1 ) ? length(I_hat) : size(I_hat,2) )
+        I_hat_2[s[:u], :] = I_hat
+        I = hcat( I, I_hat_2 )
     end
 
-    return sqrt(err2)/norm
+    return I
+end
+
+function get_L2error( approx::nperiodic_approx, norm::Float64, fc_fun::Function, lambda::Float64 ) 
+    I = getIndexSet( approx )
+    fc = approx.fc[lambda].data
+
+    L2_error = norm^2
+
+    for i = 1:length(fc)
+        k = I[:,i]
+        fck = fc_fun(k)
+        L2_error += abs(fck - fc[i])^2 - abs( fck )^2
+    end
+
+    return sqrt(L2_error)/norm
 end
 
 function get_L2error( approx::nperiodic_approx, norm::Float64, fc_fun::Function ) 
@@ -117,7 +123,9 @@ function evaluate( approx::nperiodic_approx, X_up::Matrix{Float64}, lambda::Floa
     end
 
     F = GroupedTransform(approx.trafo.setting, X)
-    return F*scaleCoeffs( approx, approx.fc[lambda].data )
+    scalingVector = getScalingVector( approx )
+
+    return F*GroupedCoeff(approx.trafo.setting, scalingVector.*approx.fc[lambda].data)  
 end
 
 function evaluate( approx::nperiodic_approx, X::Matrix{Float64} )

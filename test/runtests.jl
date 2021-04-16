@@ -3,11 +3,15 @@ using Distributions
 using Test
 using Random 
 
-include("TestFunction.jl")
+include("TestFunctionPeriodic.jl")
+include("TestFunctionNonPeriodic.jl")
 
-using .TestFunction
+using .TestFunctionPeriodic
+using .TestFunctionNonPeriodic
 
 rng = MersenneTwister(1234)
+
+#### PERIODIC TEST ####
 
 d = 6
 ds = 2
@@ -17,69 +21,38 @@ bw = [ 100, 10 ]
 λs = [ 0.0, 1.0 ]
 
 X = rand( rng, d, M ) .- 0.5
-y = [ TestFunction.f(X[:,i]) for i = 1:M ]
+y = [ TestFunctionPeriodic.f(X[:,i]) for i = 1:M ]
 
 a = ANOVAapprox.periodic_approx( X, complex(y), ds, bw; method = "lsqr" ) 
-
 ANOVAapprox.approximate(a, lambda=λs, max_iter=max_iter)
 
 bw = [ 128, 32 ]
-a2 = ANOVAapprox.periodic_approx( X, complex(y), ds, bw; method = "lsqr", active_set=TestFunction.AS ) 
+a2 = ANOVAapprox.periodic_approx( X, complex(y), ds, bw; method = "lsqr", active_set=TestFunctionPeriodic.AS ) 
 
 ANOVAapprox.approximate(a2, lambda=λs, max_iter=max_iter)
 r = ANOVAapprox.get_AttributeRanking( a2, 0.0 )
-d = ANOVAapprox.get_L2error( a2, TestFunction.norm(), TestFunction.fc ) 
+d = ANOVAapprox.get_L2error( a2, TestFunctionPeriodic.norm(), TestFunctionPeriodic.fc ) 
 
 @test d[0.0] < 5*10^(-3)
 
-# Friedman 1
-function f1( x::Vector{Float64} )::Float64
-    if ( minimum(x) < 0 ) || ( maximum(x) > 1 )
-        error( "The nodes need to be between zero and one." )
-    end
+#### NONPERIODIC TEST ####
 
-    return 10*sin(pi*x[1]*x[2])+20*((x[3]-0.5)^2)+10*x[4]+5*x[5]
-end
-
-f1_active_set = Vector{Vector{Int64}}(undef, 7)
-f1_active_set[1] = []
-f1_active_set[2] = [1,]
-f1_active_set[3] = [2,]
-f1_active_set[4] = [3,]
-f1_active_set[5] = [4,]
-f1_active_set[6] = [5,]
-f1_active_set[7] = [1,2]
-
-Random.seed!(12334)
-
-d = 10
+d = 8
 ds = 2
+M = 100_000
+max_iter = 50
+bw = [ 20, 4 ]
+λs = [ 0.0, 1.0 ]
 
-M_train = 200
-M_test = 1000
+(X, y) = TestFunctionNonPeriodic.generateData( M, false, rng )
 
-X_train = rand( d, M_train )
-X_test = rand( d, M_test )
+a = ANOVAapprox.nperiodic_approx( X, complex(y), ds, bw; basis="cheb" )
+ANOVAapprox.approximate(a, lambda=λs, max_iter=max_iter, precondition=false)
 
-dist = Normal( 0.0, 1.0 )
-noise_train = rand( dist, M_train )
-noise_test = rand( dist, M_test )
+a2 = ANOVAapprox.nperiodic_approx( X, complex(y), ds, bw; basis="cheb", active_set=TestFunctionNonPeriodic.AS ) 
+ANOVAapprox.approximate(a2, lambda=λs, max_iter=max_iter, precondition=false)
 
-y_train = [ f1(X_train[:,i])+noise_train[i] for i = 1:M_train ]
-y_test = [ f1(X_test[:,i])+noise_test[i] for i = 1:M_test ]
+r = ANOVAapprox.get_AttributeRanking( a2, 0.0 )
+d = ANOVAapprox.get_L2error( a2, TestFunctionNonPeriodic.norm(), TestFunctionNonPeriodic.fc ) 
 
-N = Dict( 1 => [8,4], 2 => [10, 4] )
-mses = ANOVAapprox.testBandwidths( X_train, complex(y_train), X_test, complex(y_test), ds, N; active_set=f1_active_set, verbose=false )
-min_mses = findmin(mses)
-
-println(min_mses)
-
-@test min_mses[1] < 1.3
-
-N = Dict( 1 => [8,4], 2 => [10, 4] )
-mses = ANOVAapprox.testBandwidths( X_train, complex(y_train), X_test, complex(y_test), ds, N; basis="cheb", active_set=f1_active_set, verbose=false )
-min_mses = findmin(mses)
-
-println(min_mses)
-
-@test min_mses[1] < 1.3
+@test d[0.0] < 7*10^(-3)

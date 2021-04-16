@@ -1,4 +1,4 @@
-module TestFunction
+module TestFunctionPeriodic
 
 using LinearAlgebra
 
