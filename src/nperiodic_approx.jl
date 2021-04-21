@@ -153,8 +153,3 @@ function testBandwidths( X_train::Matrix{Float64}, y_train::Vector{ComplexF64}, 
     return mses_bw
 
 end
-
-function get_l2error( approx::nperiodic_approx, lambda::Float64 )::Float64
-    scalingVector = getScalingVector( approx )
-    return norm(approx.y - approx.trafo*GroupedCoeff(approx.trafo.setting, scalingVector.*vec(approx.fc[lambda])))/norm(approx.y)
-end
