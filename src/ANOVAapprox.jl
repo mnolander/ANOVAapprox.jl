@@ -6,10 +6,6 @@ using LinearAlgebra, IterativeSolvers, LinearMaps, Plots, Distributed
 
 abstract type fun_approx end
 
-function get_l2error( approx::fun_approx, lambda::Float64 )::Float64
-    return norm(approx.y - approx.trafo*approx.fc[lambda])/norm(approx.y)
-end
-
 function get_l2error( approx::fun_approx, X::Matrix{Float64}, y::Vector{ComplexF64} )
     ys = evaluate( approx, X )
     return Dict( λ => norm(ys[λ]-y)/norm(y) for λ in collect(keys(approx.fc)))

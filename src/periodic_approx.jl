@@ -38,6 +38,10 @@ function periodic_approx( X::Matrix{Float64}, y::Vector{ComplexF64}, ds::Integer
     end
 end
 
+function get_l2error( approx::periodic_approx, lambda::Float64 )::Float64
+    return norm(approx.y - approx.trafo*approx.fc[lambda])/norm(approx.y)
+end
+
 function get_L2error( approx::periodic_approx, norm::Float64, fc_fun::Function, lambda::Float64 ) 
     err2 = norm^2
 
