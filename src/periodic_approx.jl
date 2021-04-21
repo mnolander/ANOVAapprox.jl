@@ -78,6 +78,13 @@ function evaluate( approx::periodic_approx, X::Matrix{Float64}, lambda::Float64 
     return F*fc
 end
 
+
+function evaluate( approx::periodic_approx, lambda::Float64 )::Vector{ComplexF64}
+    return approx.trafo*approx.fc[lambda]
+end
 function evaluate( approx::periodic_approx, X::Matrix{Float64} )
     return Dict( λ => evaluate(approx, X, λ) for λ in collect(keys(approx.fc)))
+end
+function evaluate( approx::periodic_approx )
+    return Dict( λ => evaluate(approx, λ) for λ in collect(keys(approx.fc)))
 end

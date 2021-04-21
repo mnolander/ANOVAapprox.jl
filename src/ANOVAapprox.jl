@@ -7,7 +7,7 @@ using LinearAlgebra, IterativeSolvers, LinearMaps, Plots, Distributed
 abstract type fun_approx end
 
 function get_l2error( approx::fun_approx, lambda::Float64 )::Float64
-    return get_l2error( approx, approx.X, approx.y )[lambda]
+    return get_l2error( approx )[lambda]
 end
 
 function get_l2error( approx::fun_approx, X::Matrix{Float64}, y::Vector{ComplexF64} )
@@ -16,7 +16,8 @@ function get_l2error( approx::fun_approx, X::Matrix{Float64}, y::Vector{ComplexF
 end
 
 function get_l2error( approx::fun_approx )
-    return get_l2error( approx, approx.X, approx.y )
+    ys = evaluate( approx )
+    return Dict( λ => norm(ys[λ]-approx.y)/norm(approx.y) for λ in collect(keys(approx.fc)))
 end
 
 function get_GSI( approx::fun_approx, lambda::Float64; dict=false )

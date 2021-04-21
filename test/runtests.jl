@@ -32,7 +32,7 @@ a2 = ANOVAapprox.periodic_approx( X, complex(y), ds, bw; method = "lsqr", active
 ANOVAapprox.approximate(a2, lambda=λs, max_iter=max_iter)
 r = ANOVAapprox.get_AttributeRanking( a2, 0.0 )
 d = ANOVAapprox.get_L2error( a2, TestFunctionPeriodic.norm(), TestFunctionPeriodic.fc ) 
-ANOVAapprox.get_l2error(a2)
+println( ANOVAapprox.get_l2error(a2) )
 
 @test d[0.0] < 5*10^(-3)
 
@@ -55,6 +55,6 @@ ANOVAapprox.approximate(a2, lambda=λs, max_iter=max_iter, precondition=false)
 
 r = ANOVAapprox.get_AttributeRanking( a2, 0.0 )
 d = ANOVAapprox.get_L2error( a2, TestFunctionNonPeriodic.norm(), TestFunctionNonPeriodic.fc ) 
-ANOVAapprox.get_l2error(a2)
+println( ANOVAapprox.get_l2error(a2) )
 
 @test d[0.0] < 7*10^(-3)
