@@ -48,7 +48,7 @@ bw = [ 20, 4 ]
 (X, y) = TestFunctionNonPeriodic.generateData( M, false, rng )
 
 a = ANOVAapprox.nperiodic_approx( X, complex(y), ds, bw; basis="cheb", method="fista" )
-ANOVAapprox.approximate(a, lambda=λs, max_iter=max_iter, precondition=false, smoothness=1.0)
+ANOVAapprox.approximate(a, lambda=λs, max_iter=max_iter, smoothness=1.0)
 
 a2 = ANOVAapprox.nperiodic_approx( X, complex(y), ds, bw; basis="cheb", active_set=TestFunctionNonPeriodic.AS ) 
 ANOVAapprox.approximate(a2, lambda=λs, max_iter=max_iter, precondition=false)
