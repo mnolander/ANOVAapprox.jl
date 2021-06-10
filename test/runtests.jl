@@ -40,8 +40,8 @@ println( ANOVAapprox.get_l2error(a2) )
 
 d = 8
 ds = 2
-M = 100_000
-max_iter = 5
+M = 10000
+max_iter = 20
 bw = [ 20, 4 ]
 λs = [ 0.0, 1.0 ]
 
