@@ -41,7 +41,7 @@ println( ANOVAapprox.get_l2error(a2) )
 d = 8
 ds = 2
 M = 100_000
-max_iter = 50
+max_iter = 5
 bw = [ 20, 4 ]
 λs = [ 0.0, 1.0 ]
 
@@ -49,7 +49,7 @@ bw = [ 20, 4 ]
 
 a = ANOVAapprox.nperiodic_approx( X, complex(y), ds, bw; basis="cheb", method="fista" )
 ANOVAapprox.approximate(a, lambda=λs, max_iter=max_iter, smoothness=1.0)
-
+println( ANOVAapprox.get_l2error(a) )
 a2 = ANOVAapprox.nperiodic_approx( X, complex(y), ds, bw; basis="cheb", active_set=TestFunctionNonPeriodic.AS ) 
 ANOVAapprox.approximate(a2, lambda=λs, max_iter=max_iter, precondition=false)
 
