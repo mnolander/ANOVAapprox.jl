@@ -86,7 +86,7 @@ function approximate_old( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::In
 
         F_vec = LinearMap{ComplexF64}(
             fhat -> vcat( dsqrt.*(approx.trafo*GroupedCoeff(approx.trafo.setting, scalingVector.*fhat)), wsqrt .* (scalingVector.*fhat) ),
-            f -> scalingVector.*(approx, vec(approx.trafo'*(dsqrt.*f[1:M])))+wsqrt.*f[M+1:end],
+            f -> scalingVector.*(vec(approx.trafo'*(dsqrt.*f[1:M])))+wsqrt.*f[M+1:end],
             size(approx.X, 2)+nf, nf )
 
         tmp = zeros( ComplexF64, nf )

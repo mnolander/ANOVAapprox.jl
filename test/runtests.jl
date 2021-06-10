@@ -48,7 +48,7 @@ bw = [ 20, 4 ]
 (X, y) = TestFunctionNonPeriodic.generateData( M, false, rng )
 
 a = ANOVAapprox.nperiodic_approx( X, complex(y), ds, bw; basis="cheb" )
-ANOVAapprox.approximate(a, lambda=λs, max_iter=max_iter, precondition=false)
+ANOVAapprox.approximate(a, lambda=λs, max_iter=max_iter, precondition=false, smoothness=1.0)
 
 a2 = ANOVAapprox.nperiodic_approx( X, complex(y), ds, bw; basis="cheb", active_set=TestFunctionNonPeriodic.AS ) 
 ANOVAapprox.approximate(a2, lambda=λs, max_iter=max_iter, precondition=false)
@@ -56,5 +56,3 @@ ANOVAapprox.approximate(a2, lambda=λs, max_iter=max_iter, precondition=false)
 r = ANOVAapprox.get_AttributeRanking( a2, 0.0 )
 d = ANOVAapprox.get_L2error( a2, TestFunctionNonPeriodic.norm(), TestFunctionNonPeriodic.fc ) 
 println( ANOVAapprox.get_l2error(a2) )
-
-@test d[0.0] < 7*10^(-3)
