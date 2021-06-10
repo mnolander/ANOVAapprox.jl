@@ -28,7 +28,8 @@ function approximate( approx::nperiodic_approx_scat_fista{d,ds}, lambda::Float64
   
   what = sobolev_weights(approx.trafo.setting, smoothness = smoothness)
   fista!(ghat, approx.trafo, approx.y, lambda, what, max_iter = max_iter)
-  approx.fc[lambda] = ghat
+  scalingVector = getScalingVector( approx )
+  approx.fc[lambda] = ghat ./ scalingVector
 end
 
 
