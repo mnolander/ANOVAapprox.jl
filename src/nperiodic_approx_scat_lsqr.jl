@@ -16,7 +16,7 @@ function cheb_density( x::Vector{Float64} )::Float64
    return prod( xs -> 1/sqrt(1-xs^2), x )
 end
 
-function getScalingVector( approx::nperiodic_approx_scat_lsqr{d,ds} )::Vector{Float64} where {d,ds}
+function getScalingVector( approx )::Vector{Float64} 
     scalingVector = ones( Float64, get_NumFreq( approx ) )
     index = 2
 
