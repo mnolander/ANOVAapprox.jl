@@ -48,7 +48,8 @@ function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=
         W = ones( M )
     end
 
-    for L in lambda 
+    for i = 1:length(lambda) 
+        L = lambda[i] 
         if verbose
             println( "lambda = ", L )
         end
@@ -59,6 +60,11 @@ function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=
             M, n )
 
         tmp = zeros( ComplexF64, n )
+
+        if i > 1 
+            tmp = approx.fc[lambda[i-1]].data
+        end
+
         lsqr!( tmp, F, W .* approx.y, maxiter = max_iter, verbose=verbose, damp=sqrt(L) )
         approx.fc[L] = GroupedCoeff(approx.trafo.setting, tmp)
     end
