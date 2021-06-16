@@ -33,7 +33,7 @@ function getScalingVector( approx )::Vector{Float64}
     return scalingVector
 end
 
-function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=0.0, precondition::Bool=true, verbose::Bool=false ) where {d,ds}
+function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=30, lambda::Vector{Float64}=[0.0,], smoothness::Float64=0.0, reuse::Bool=false, precondition::Bool=true, verbose::Bool=false ) where {d,ds}
     if smoothness != 0.0 
         return approximate_old( approx; max_iter=max_iter, lambda=lambda, smoothness=smoothness, precondition=precondition, verbose=verbose )
     end
@@ -48,8 +48,10 @@ function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=
         W = ones( M )
     end
 
+    lambda_sorted = sort(lambda, rev=true)
+
     for i = 1:length(lambda) 
-        L = lambda[i] 
+        L = lambda_sorted[i] 
         if verbose
             println( "lambda = ", L )
         end
@@ -61,8 +63,8 @@ function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=
 
         tmp = zeros( ComplexF64, n )
 
-        if i > 1 
-            tmp = copy(approx.fc[lambda[i-1]].data)
+        if ( i > 1 ) && ( reuse )
+            tmp = copy(approx.fc[lambda_sorted[i-1]].data)
         end
 
         lsqr!( tmp, F, W .* approx.y, maxiter = max_iter, verbose=verbose, damp=sqrt(L) )
