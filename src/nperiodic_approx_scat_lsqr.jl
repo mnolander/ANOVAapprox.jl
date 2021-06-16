@@ -62,7 +62,7 @@ function approximate( approx::nperiodic_approx_scat_lsqr{d,ds}; max_iter::Int64=
         tmp = zeros( ComplexF64, n )
 
         if i > 1 
-            tmp = approx.fc[lambda[i-1]].data
+            tmp = copy(approx.fc[lambda[i-1]].data)
         end
 
         lsqr!( tmp, F, W .* approx.y, maxiter = max_iter, verbose=verbose, damp=sqrt(L) )
