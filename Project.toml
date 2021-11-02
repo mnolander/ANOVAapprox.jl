@@ -1,7 +1,7 @@
 name = "ANOVAapprox"
 uuid = "5e027bd6-ab01-4733-8320-e0223e929ebb"
 authors = ["Michael Schmischke <michael.schmischke@math.tu-chemnitz.de> and Felix Bartel <felix.bartel@math.tu-chemnitz.de>"]
-version = "1.0.26"
+version = "1.0.27"
 
 [deps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
@@ -13,7 +13,7 @@ Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
-GroupedTransforms = "1"
+GroupedTransforms = "1.0"
 IterativeSolvers = "0.8, 0.9"
 LinearMaps = "2"
 Plots = "1"
