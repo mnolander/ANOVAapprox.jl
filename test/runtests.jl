@@ -14,7 +14,7 @@ using .TestFunctionCheb
 
 rng = MersenneTwister(1234)
 
-tests = ["cheb_fista", "cheb_lsqr", "per_lsqr", "per_fista"]
+tests = ["misc", "cheb_fista", "cheb_lsqr", "per_lsqr", "per_fista"]
 
 for t in tests
     include("$(t).jl")

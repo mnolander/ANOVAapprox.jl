@@ -131,6 +131,26 @@ mutable struct approx_U <: approx
     end
 end
 
+function approx(
+    X::Matrix{Float64},
+    y::Union{Vector{ComplexF64},Vector{Float64}},
+    U::Vector{Vector{Int}},
+    N::Vector{Int},
+    basis::String = "cos",
+)
+    return approx_U(X, y, U, N, basis)
+end
+
+function approx(
+    X::Matrix{Float64},
+    y::Union{Vector{ComplexF64},Vector{Float64}},
+    ds::Int,
+    N::Vector{Int},
+    basis::String = "cos",
+)
+    return approx_ds(X, y, ds, N, basis)
+end
+
 function approximate(
     a::approx,
     λ::Float64;
