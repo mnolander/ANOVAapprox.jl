@@ -53,6 +53,11 @@ mutable struct approx_ds <: approx
             elseif basis == "cheb"
                 Xt = acos.(Xt)
                 Xt ./= 2 * pi
+            elseif basis == "std"
+                Xt ./= sqrt(2)
+                Xt = erf.(Xt)
+                Xt .+= 1
+                Xt ./= 4
             end
 
             trafo = GroupedTransform(gt_systems[basis], d, ds, N, Xt)
@@ -111,6 +116,11 @@ mutable struct approx_U <: approx
             elseif basis == "cheb"
                 Xt = acos.(Xt)
                 Xt ./= 2 * pi
+            elseif basis == "std"
+                Xt ./= sqrt(2)
+                Xt = erf.(Xt)
+                Xt .+= 1
+                Xt ./= 4
             end
 
             trafo = GroupedTransform(gt_systems[basis], U, N, Xt)
@@ -242,6 +252,11 @@ function evaluate(
     elseif basis == "cheb"
         Xt = acos.(Xt)
         Xt ./= 2 * pi
+    elseif basis == "std"
+        Xt ./= sqrt(2)
+        Xt = erf.(Xt)
+        Xt .+= 1
+        Xt ./= 4
     end
 
     if isa(a, approx_U)

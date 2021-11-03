@@ -1,6 +1,6 @@
 module ANOVAapprox
 
-using GroupedTransforms, LinearAlgebra, IterativeSolvers, LinearMaps, Distributed
+using GroupedTransforms, LinearAlgebra, IterativeSolvers, LinearMaps, Distributed, SpecialFunctions
 
 bases = ["per", "cos", "cheb", "std"]
 types = Dict("per" => ComplexF64, "cos" => Float64, "cheb" => Float64, "std" => Float64)
