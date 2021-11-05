@@ -1,74 +1,4 @@
-abstract type approx end
-
-mutable struct approx_ds <: approx
-    basis::String
-    X::Matrix{Float64}
-    y::Union{Vector{ComplexF64},Vector{Float64}}
-    ds::Int
-    N::Vector{Int}
-    trafo::GroupedTransform
-    fc::Dict{Float64,GroupedCoefficients}
-
-    function approx_ds(
-        X::Matrix{Float64},
-        y::Union{Vector{ComplexF64},Vector{Float64}},
-        ds::Int,
-        N::Vector{Int},
-        basis::String = "cos",
-    )
-        if basis in bases
-            d = size(X, 1)
-            M = size(X, 2)
-
-            if !isa(y, vtypes[basis])
-                error(
-                    "Periodic functions require complex vectors, nonperiodic functions real vectors.",
-                )
-            end
-
-            if length(y) != M
-                error("y needs as many entries as X has columns.")
-            end
-
-            if (ds < 1) || (ds > d)
-                error("ds needs to be between 1 and d.")
-            end
-
-            if length(N) != ds
-                error("N needs to have ds entries.")
-            end
-
-            if (basis == "per") && ((minimum(X) < -0.5) || (maximum(X) >= 0.5))
-                error("Nodes need to be between -0.5 and 0.5.")
-            elseif (basis == "cos") && ((minimum(X) < 0) || (maximum(X) > 1))
-                error("Nodes need to be between 0 and 1.")
-            elseif (basis == "cheb") && ((minimum(X) < -1) || (maximum(X) > 1))
-                error("Nodes need to be between -1 and 1.")
-            end
-
-            Xt = copy(X)
-
-            if basis == "cos"
-                Xt ./= 2
-            elseif basis == "cheb"
-                Xt = acos.(Xt)
-                Xt ./= 2 * pi
-            elseif basis == "std"
-                Xt ./= sqrt(2)
-                Xt = erf.(Xt)
-                Xt .+= 1
-                Xt ./= 4
-            end
-
-            trafo = GroupedTransform(gt_systems[basis], d, ds, N, Xt)
-            return new(basis, X, y, ds, N, trafo, Dict{Float64,GroupedCoefficients}())
-        else
-            error("Basis not found.")
-        end
-    end
-end
-
-mutable struct approx_U <: approx
+mutable struct approx
     basis::String
     X::Matrix{Float64}
     y::Union{Vector{ComplexF64},Vector{Float64}}
@@ -77,7 +7,7 @@ mutable struct approx_U <: approx
     trafo::GroupedTransform
     fc::Dict{Float64,GroupedCoefficients}
 
-    function approx_U(
+    function approx(
         X::Matrix{Float64},
         y::Union{Vector{ComplexF64},Vector{Float64}},
         U::Vector{Vector{Int}},
@@ -86,6 +16,7 @@ mutable struct approx_U <: approx
     )
         if basis in bases
             M = size(X, 2)
+            ds = maximum([length(u) for u in U])
 
             if !isa(y, vtypes[basis])
                 error(
@@ -97,8 +28,14 @@ mutable struct approx_U <: approx
                 error("y needs as many entries as X has columns.")
             end
 
-            if length(N) != length(U)
-                error("N needs to have |U| entries.")
+            if (length(N) != length(U)) && (length(N) != ds)
+                error("N needs to have |U| or max |u| entries.")
+            end
+
+            if length(N) == ds
+                bw = get_orderDependentBW(U, N)
+            else
+                bw = N
             end
 
             if (basis == "per") && ((minimum(X) < -0.5) || (maximum(X) >= 0.5))
@@ -123,22 +60,12 @@ mutable struct approx_U <: approx
                 Xt ./= 4
             end
 
-            trafo = GroupedTransform(gt_systems[basis], U, N, Xt)
-            return new(basis, X, y, U, N, trafo, Dict{Float64,GroupedCoefficients}())
+            trafo = GroupedTransform(gt_systems[basis], U, bw, Xt)
+            return new(basis, X, y, U, bw, trafo, Dict{Float64,GroupedCoefficients}())
         else
             error("Basis not found.")
         end
     end
-end
-
-function approx(
-    X::Matrix{Float64},
-    y::Union{Vector{ComplexF64},Vector{Float64}},
-    U::Vector{Vector{Int}},
-    N::Vector{Int},
-    basis::String = "cos",
-)
-    return approx_U(X, y, U, N, basis)
 end
 
 function approx(
@@ -148,7 +75,8 @@ function approx(
     N::Vector{Int},
     basis::String = "cos",
 )
-    return approx_ds(X, y, ds, N, basis)
+    Uds = get_superposition_set(size(X, 1), ds)
+    return approx(X, y, Uds, N, basis)
 end
 
 function approximate(
@@ -279,13 +207,8 @@ function evaluate(
         Xt ./= 4
     end
 
-    if isa(a, approx_U)
-        trafo = GroupedTransform(gt_systems[basis], a.U, a.N, Xt)
-        return trafo * a.fc[λ]
-    elseif isa(a, approx_ds)
-        trafo = GroupedTransform(gt_systems[basis], size(X, 1), a.ds, a.N, Xt)
-        return trafo * a.fc[λ]
-    end
+    trafo = GroupedTransform(gt_systems[basis], a.U, a.N, Xt)
+    return trafo * a.fc[λ]
 end
 
 function evaluate(a::approx, λ::Float64)::Union{Vector{ComplexF64},Vector{Float64}}

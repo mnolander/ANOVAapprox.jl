@@ -14,12 +14,12 @@ y_test = [TestFunctionPeriodic.f(X_test[:, i]) for i = 1:M]
 
 ####  ####
 
-ads = ANOVAapprox.approx_ds(X, complex(y), ds, bw, "per")
+ads = ANOVAapprox.approx(X, complex(y), ds, bw, "per")
 ANOVAapprox.approximate(ads, lambda = λs)
 
 bw = ANOVAapprox.get_orderDependentBW(TestFunctionPeriodic.AS, [128, 32])
 
-aU = ANOVAapprox.approx_U(X, complex(y), TestFunctionPeriodic.AS, bw, "per")
+aU = ANOVAapprox.approx(X, complex(y), TestFunctionPeriodic.AS, bw, "per")
 ANOVAapprox.approximate(aU, lambda = λs)
 
 err_L2_ds =

@@ -10,12 +10,12 @@ bw = [20, 4]
 (X, y) = TestFunctionCheb.generateData(M)
 (X_test, y_test) = TestFunctionCheb.generateData(M)
 
-ads = ANOVAapprox.approx_ds(X, y, ds, bw, "cheb")
+ads = ANOVAapprox.approx(X, y, ds, bw, "cheb")
 ANOVAapprox.approximate(ads, lambda = λs, solver = "fista")
 
 bw = ANOVAapprox.get_orderDependentBW(TestFunctionCheb.AS, bw)
 
-aU = ANOVAapprox.approx_U(X, y, TestFunctionCheb.AS, bw, "cheb")
+aU = ANOVAapprox.approx(X, y, TestFunctionCheb.AS, bw, "cheb")
 ANOVAapprox.approximate(aU, lambda = λs, solver = "fista")
 
 err_L2_ds = ANOVAapprox.get_L2error(ads, TestFunctionCheb.norm(), TestFunctionCheb.fc)[0.0]

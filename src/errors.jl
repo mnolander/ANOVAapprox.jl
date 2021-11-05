@@ -52,6 +52,33 @@ function get_mse(
     return Dict(λ => get_mse(a, X, y, λ) for λ in collect(keys(a.fc)))
 end
 
+function get_mad(a::approx, λ::Float64)::Float64
+    y_eval = evaluate(a, λ)
+    return 1 / length(a.y) * norm(y_eval - a.y, 1)
+end
+
+function get_mad(
+    a::approx,
+    X::Matrix{Float64},
+    y::Union{Vector{ComplexF64},Vector{Float64}},
+    λ::Float64,
+)::Float64
+    y_eval = evaluate(a, X, λ)
+    return 1 / length(y) * norm(y_eval - y, 1)
+end
+
+function get_mad(a::approx)::Dict{Float64,Float64}
+    return Dict(λ => get_mad(a, λ) for λ in collect(keys(a.fc)))
+end
+
+function get_mad(
+    a::approx,
+    X::Matrix{Float64},
+    y::Union{Vector{ComplexF64},Vector{Float64}},
+)::Dict{Float64,Float64}
+    return Dict(λ => get_mad(a, X, y, λ) for λ in collect(keys(a.fc)))
+end
+
 function get_L2error(a::approx, norm::Float64, bc_fun::Function, λ::Float64)::Float64
     error = norm^2
     index_set = get_IndexSet(a.trafo.setting, size(a.X, 1))
