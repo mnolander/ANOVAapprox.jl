@@ -1,3 +1,8 @@
+@doc raw"""
+    get_GSI( a::approx, λ::Float64; dict::Bool = false )::Union{Vector{Float64},Dict{Vector{Int},Float64}}
+
+This function returns the global sensitivity indices of the approximation with ``\lambda`` as a vector for `dict = false` or else a dictionary.
+"""
 function get_GSI(
     a::approx,
     λ::Float64;
@@ -22,6 +27,11 @@ function get_GSI(
     end
 end
 
+@doc raw"""
+    get_GSI( a::approx; dict::Bool = false )::Dict{Float64,Union{Vector{Float64},Dict{Vector{Int},Float64}}}
+
+This function returns the global sensitivity indices of the approximation for all ``\lambda`` as a vector for `dict = false` or else a dictionary.
+"""
 function get_GSI(
     a::approx;
     dict::Bool = false,
@@ -29,6 +39,11 @@ function get_GSI(
     return Dict(λ => get_GSI(a, λ, dict = dict) for λ in collect(keys(a.fc)))
 end
 
+@doc raw"""
+    get_AttributeRanking( a::approx, λ::Float64 )::Vector{Float64}
+
+This function returns the attribute ranking of the approximation for reg. parameter ``\lambda`` as a vector of length `a.d`.
+"""
 function get_AttributeRanking(a::approx, λ::Float64)::Vector{Float64}
     d = size(a.X, 1)
     gsis = get_GSI(a, λ, dict = true)
@@ -60,6 +75,11 @@ function get_AttributeRanking(a::approx, λ::Float64)::Vector{Float64}
     return r ./ nf
 end
 
+@doc raw"""
+    get_AttributeRanking( a::approx, λ::Float64 )::Dict{Float64,Vector{Float64}}
+
+This function returns the attribute ranking of the approximation for all reg. parameters ``\lambda`` as a dictionary of vectors of length `a.d`.
+"""
 function get_AttributeRanking(a::approx)::Dict{Float64,Vector{Float64}}
     return Dict(λ => get_AttributeRanking(a, λ) for λ in collect(keys(a.fc)))
 end

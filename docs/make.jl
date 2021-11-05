@@ -4,7 +4,13 @@ makedocs(
     sitename = "ANOVAapprox.jl",
     format = Documenter.HTML(; prettyurls = false),
     modules = [ANOVAapprox],
-    pages = ["Home" => "index.md", "About" => "about.md"],
+    pages = [
+        "Home" => "index.md",
+        "Apprximation" => "approx.md",
+        "Errors" => "errors.md",
+        "Analysis" => "analysis.md",
+        "About" => "about.md",
+    ],
 )
 
 deploydocs(

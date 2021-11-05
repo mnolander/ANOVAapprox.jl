@@ -1,3 +1,23 @@
+@doc raw"""
+    approx
+
+A struct to hold the scattered data function approximation.
+
+# Fields
+* `basis::String` - basis of the function space; currently choice of `"per"`, `"cos"`, `"cheb"`, and `"std"`
+* `X::Matrix{Float64}` - scattered data nodes with d rows and M columns
+* `y::Union{Vector{ComplexF64},Vector{Float64}}` - M function values (complex for `basis = "per"`, real ortherwise)
+* `U::Vector{Vector{Int}}` - a vector containing susbets of coordinate indices 
+* `N::Vector{Int}` - bandwdiths for each ANOVA term
+* `trafo::GroupedTransform` - holds the grouped transformation
+* `fc::Dict{Float64,GroupedCoefficients}` - holds the GroupedCoefficients after approximation for every different regularization parameters
+
+# Constructor
+    approx( X::Matrix{Float64}, y::Union{Vector{ComplexF64},Vector{Float64}}, U::Vector{Vector{Int}}, N::Vector{Int}, basis::String = "cos" )
+
+# Additional Constructor
+    approx( X::Matrix{Float64}, y::Union{Vector{ComplexF64},Vector{Float64}}, ds::Int, N::Vector{Int}, basis::String = "cos" )
+"""
 mutable struct approx
     basis::String
     X::Matrix{Float64}
@@ -79,6 +99,12 @@ function approx(
     return approx(X, y, Uds, N, basis)
 end
 
+
+@doc raw"""
+    approximate( a::approx, λ::Float64; max_iter::Int = 50, weights::Union{Vector{Float64},Nothing} = nothing, verbose::Bool = false, solver::String = "lsqr" )::Nothing
+
+This function computes the approximation for the regularization parameter ``\lambda``.
+"""
 function approximate(
     a::approx,
     λ::Float64;
@@ -164,7 +190,11 @@ function approximate(
     return
 end
 
+@doc raw"""
+    approximate( a::approx; lambda::Vector{Float64} = exp.(range(0, 5, length = 5)), max_iter::Int = 50, weights::Union{Vector{Float64},Nothing} = nothing, verbose::Bool = false, solver::String = "lsqr" )::Nothing
 
+This function computes the approximation for the regularization parameters contained in `lambda`.
+"""
 function approximate(
     a::approx;
     lambda::Vector{Float64} = exp.(range(0, 5, length = 5)),
@@ -177,7 +207,11 @@ function approximate(
     return
 end
 
+@doc raw"""
+    evaluate( a::approx; X::Matrix{Float64}, λ::Float64 )::Union{Vector{ComplexF64},Vector{Float64}}
 
+This function evaluates the approximation on the nodes `X` for the regularization parameter `λ`.
+"""
 function evaluate(
     a::approx,
     X::Matrix{Float64},
@@ -211,10 +245,20 @@ function evaluate(
     return trafo * a.fc[λ]
 end
 
+@doc raw"""
+    evaluate( a::approx; λ::Float64 )::Union{Vector{ComplexF64},Vector{Float64}}
+
+This function evaluates the approximation on the nodes `a.X` for the regularization parameter `λ`.
+"""
 function evaluate(a::approx, λ::Float64)::Union{Vector{ComplexF64},Vector{Float64}}
     return a.trafo * a.fc[λ]
 end
 
+@doc raw"""
+    evaluate( a::approx; X::Matrix{Float64} )::Union{Vector{ComplexF64},Vector{Float64}}
+
+This function evaluates the approximation on the nodes `X` for all regularization parameters.
+"""
 function evaluate(
     a::approx,
     X::Matrix{Float64},
@@ -222,6 +266,11 @@ function evaluate(
     return Dict(λ => evaluate(a, X, λ) for λ in collect(keys(a.fc)))
 end
 
+@doc raw"""
+    evaluate( a::approx )::Dict{Float64,Union{Vector{ComplexF64},Vector{Float64}}}
+
+This function evaluates the approximation on the nodes `a.X` for all regularization parameters.
+"""
 function evaluate(a::approx)::Dict{Float64,Union{Vector{ComplexF64},Vector{Float64}}}
     return Dict(λ => evaluate(a, λ) for λ in collect(keys(a.fc)))
 end
