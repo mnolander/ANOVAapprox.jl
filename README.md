@@ -5,6 +5,7 @@
 [![ci](https://github.com/NFFT/ANOVAapprox.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/NFFT/ANOVAapprox.jl/actions?query=workflow%3ACI+branch%3Amain)
 [![codecov](https://codecov.io/gh/NFFT/ANOVAapprox.jl/branch/main/graph/badge.svg?token=5RUDL3Z3S5)](https://codecov.io/gh/NFFT/ANOVAapprox.jl)
 [![Aqua QA](https://img.shields.io/badge/Aqua.jl-%F0%9F%8C%A2-aqua.svg)](https://github.com/JuliaTesting/Aqua.jl)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5657976.svg)](https://doi.org/10.5281/zenodo.5657976)
 
 This package provides a framework for the method ANOVAapprox to approximate high-dimensional functions with a low superposition dimension or a sparse ANOVA decomposition from scattered data. The method has been dicussed and applied in the following articles/preprints:
 
