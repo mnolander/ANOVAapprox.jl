@@ -8,7 +8,6 @@
 
 This package provides a framework for the method ANOVAapprox to approximate high-dimensional functions with a low superposition dimension or a sparse ANOVA decomposition from scattered data. The method has been dicussed and applied in the following articles/preprints:
 
-```@raw html
 <ul>
   <li>D. Potts und M. Schmischke <br> 
   <b>Interpretable transformed ANOVA approximation on the example of the prevention of forest fires</b> <br>
@@ -30,7 +29,6 @@ This package provides a framework for the method ANOVAapprox to approximate high
   SIAM Journal on Numerical Analysis 59 (5), 2393-2429, 2021<br>
   <a href="https://doi.org/10.1137/20M1354921">DOI</a>, <a href="https://arxiv.org/abs/1907.11412">arXiv</a>, <a href="https://www-user.tu-chemnitz.de/~mischmi/papers/anovafourier.pdf">PDF</a></li>
 </ul>
-```
 
 `ANOVAapprox.jl` provides the following functionality:
 - approximation of high-dimensional periodic and nonperiodic functions with a sparse ANOVA decomposition
