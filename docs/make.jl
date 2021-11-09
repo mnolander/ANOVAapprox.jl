@@ -6,7 +6,7 @@ makedocs(
     modules = [ANOVAapprox],
     pages = [
         "Home" => "index.md",
-        "Apprximation" => "approx.md",
+        "Approximation" => "approx.md",
         "Errors" => "errors.md",
         "Analysis" => "analysis.md",
         "About" => "about.md",

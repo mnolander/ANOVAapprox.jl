@@ -8,11 +8,25 @@
 
 This package provides a framework for the method ANOVAapprox to approximate high-dimensional functions with a low superposition dimension or a sparse ANOVA decomposition from scattered data. The method has been dicussed and applied in the following articles/preprints:
 
- -  [**Approximation of high-dimensional periodic functions with Fourier-based methods** by D. Potts and M. Schmischke](https://doi.org/10.1137/20M1354921)
- - [**Learning multivariate functions with low-dimensional structures using polynomial bases** by D. Potts and M. Schmischke](https://doi.org/10.1016/j.cam.2021.113821)
- -  [**Interpretable approximation of high-dimensional data** by D. Potts and M. Schmischke](https://arxiv.org/abs/2103.13787)
- -  [**Interpretable transformed ANOVA approximation on the example of the prevention of forest fires** by D. Potts and M. Schmischke](https://arxiv.org/abs/2110.07353)
-
+```@raw html
+<ul>
+  <li>D. Potts und M. Schmischke <br> 
+  <b>Interpretable transformed ANOVA approximation on the example of the prevention of forest fires</b> <br>
+  <a href="https://arxiv.org/abs/2110.07353">arXiv</a>, <a href="https://www-user.tu-chemnitz.de/~potts/paper/anovatransf.pdf">PDF</a></li>
+  <li>D. Potts und M. Schmischke <br> 
+  <b>Interpretable approximation of high-dimensional data</b> <br>
+  SIAM Journal on Mathematics of Data Science (accepted) <br>
+  <a href="https://arxiv.org/abs/2103.13787">arXiv</a>, <a href="https://www-user.tu-chemnitz.de/~potts/paper/intanova.pdf">PDF</a>, <a href="https://github.com/NFFT/AttributeRankingExamples">Software</a></li>
+  <li>D. Potts und M. Schmischke <br> 
+  <b>Learning multivariate functions with low-dimensional structures using polynomial bases</b><br>
+  Journal of Computational and Applied Mathematics 403, 113821, 2021<br>
+  <a href="https://doi.org/10.1016/j.cam.2021.113821">DOI</a>, <a href="https://arxiv.org/abs/1912.03195">arXiv</a>, <a href="https://www-user.tu-chemnitz.de/~potts/paper/ANOVA_T.pdf">PDF</a></li>
+  <li>D. Potts und M. Schmischke <br> 
+  <b>Approximation of high-dimensional periodic functions with Fourier-based methods</b><br>
+  SIAM Journal on Numerical Analysis 59 (5), 2393-2429, 2021<br>
+  <a href="https://doi.org/10.1137/20M1354921">DOI</a>, <a href="https://arxiv.org/abs/1907.11412">arXiv</a>, <a href="https://www-user.tu-chemnitz.de/~potts/paper/anova.pdf">PDF</a></li>
+</ul>
+```
 
 `ANOVAapprox.jl` provides the following functionality:
 - approximation of high-dimensional periodic and nonperiodic functions with a sparse ANOVA decomposition
