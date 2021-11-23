@@ -48,14 +48,16 @@ function get_AttributeRanking(a::approx, λ::Float64)::Vector{Float64}
     d = size(a.X, 1)
     gsis = get_GSI(a, λ, dict = true)
     U = collect(keys(gsis))
-    factors = zeros(Int64, length(U), d)
+    lengths = [ length(u) for u in U ]
+    ds = maximum(lengths)
 
-    for i = 1:length(U)
-        u = U[i]
-        for s in u
+    factors = zeros(Int64, d, ds)
+
+    for i = 1:d 
+        for j = 1:ds 
             for v in U
-                if (length(u) == length(v)) && (s in v)
-                    factors[i, s] += 1
+                if (i in v) && (length(v) == j)
+                    factors[i,j] += 1
                 end
             end
         end
@@ -64,12 +66,11 @@ function get_AttributeRanking(a::approx, λ::Float64)::Vector{Float64}
     r = zeros(Float64, d)
     nf = 0.0
 
-    for i = 1:length(U)
-        u = U[i]
+    for u in U
         weights = 0.0
         for s in u
-            r[s] += gsis[u] * 1/factors[i, s]
-            weights += 1/factors[i, s]
+            r[s] += gsis[u] * 1/factors[s, length(u)]
+            weights += 1/factors[s, length(u)]
         end
         nf += weights * gsis[u]
     end
