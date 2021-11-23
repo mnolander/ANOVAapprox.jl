@@ -66,10 +66,12 @@ function get_AttributeRanking(a::approx, λ::Float64)::Vector{Float64}
 
     for i = 1:length(U)
         u = U[i]
+        weights = 0.0
         for s in u
-            r[s] += gsis[u] * factors[i, s]
+            r[s] += gsis[u] * 1/factors[i, s]
+            weights += 1/factors[i, s]
         end
-        nf += gsis[u] * sum(factors[i, :])
+        nf += weights * gsis[u]
     end
 
     return r ./ nf
