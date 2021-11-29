@@ -87,7 +87,7 @@ function get_AttributeRanking(a::approx)::Dict{Float64,Vector{Float64}}
     return Dict(λ => get_AttributeRanking(a, λ) for λ in collect(keys(a.fc)))
 end
 
-function get_ActiveSet( a::approx, λ::Float64, eps::Vector{Float64} )::Vector{Vector{Int}}
+function get_ActiveSet( a::approx, eps::Vector{Float64}, λ::Float64 )::Vector{Vector{Int}}
     lengths = [ length(u) for u in U ]
     ds = maximum(lengths)
 
@@ -120,6 +120,6 @@ function get_ActiveSet( a::approx, λ::Float64, eps::Vector{Float64} )::Vector{V
     return U_active
 end
 
-function get_ActiveSet(a::approx)::Dict{Float64,Vector{Vector{Int}}}
-    return Dict(λ => get_ActiveSet(a, λ) for λ in collect(keys(a.fc)))
+function get_ActiveSet(a::approx, eps::Vector{Float64})::Dict{Float64,Vector{Vector{Int}}}
+    return Dict(λ => get_ActiveSet(a, eps, λ) for λ in collect(keys(a.fc)))
 end

@@ -16,7 +16,7 @@ y_test = [TestFunctionPeriodic.f(X_test[:, i]) for i = 1:M]
 
 ads = ANOVAapprox.approx(X, complex(y), ds, bw, "per")
 ANOVAapprox.approximate(ads, lambda = λs, solver = "fista")
-ANOVAapprox.get_ActiveSet(ads)
+ANOVAapprox.get_ActiveSet(ads, [0.05,0.05])
 bw = ANOVAapprox.get_orderDependentBW(TestFunctionPeriodic.AS, [128, 32])
 
 aU = ANOVAapprox.approx(X, complex(y), TestFunctionPeriodic.AS, bw, "per")
