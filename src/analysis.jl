@@ -88,6 +88,7 @@ function get_AttributeRanking(a::approx)::Dict{Float64,Vector{Float64}}
 end
 
 function get_ActiveSet( a::approx, eps::Vector{Float64}, λ::Float64 )::Vector{Vector{Int}}
+    U = a.U[2:end]
     lengths = [ length(u) for u in U ]
     ds = maximum(lengths)
 
@@ -95,7 +96,6 @@ function get_ActiveSet( a::approx, eps::Vector{Float64}, λ::Float64 )::Vector{V
         error( "Entries in vector eps have to be ds.")
     end
 
-    U = a.U[2:end]
     gsi = get_GSI(a, λ)
 
     n = 0
