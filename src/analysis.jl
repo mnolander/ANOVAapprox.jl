@@ -86,3 +86,40 @@ This function returns the attribute ranking of the approximation for all reg. pa
 function get_AttributeRanking(a::approx)::Dict{Float64,Vector{Float64}}
     return Dict(λ => get_AttributeRanking(a, λ) for λ in collect(keys(a.fc)))
 end
+
+function get_ActiveSet( a::approx, λ::Float64, eps::Vector{Float64} )::Vector{Vector{Int}}
+    lengths = [ length(u) for u in U ]
+    ds = maximum(lengths)
+
+    if length(eps) != ds 
+        error( "Entries in vector eps have to be ds.")
+    end
+
+    U = a.U[2:end]
+    gsi = get_GSI(a, λ)
+
+    n = 0
+
+    for i = 1:length(gsi)
+        if gsi[i] > eps[length(U[i])]
+            n += 1
+        end
+    end
+
+    U_active = Vector{Vector{Int}}(undef, n+1)
+    U_active[1] = [] 
+    idx = 2
+
+    for i = 1:length(gsi)
+        if gsi[i] > eps[length(U[i])]
+            U_active[idx] = U[i]
+            idx += 1
+        end
+    end
+
+    return U_active
+end
+
+function get_ActiveSet(a::approx)::Dict{Float64,Vector{Vector{Int}}}
+    return Dict(λ => get_ActiveSet(a, λ) for λ in collect(keys(a.fc)))
+end
