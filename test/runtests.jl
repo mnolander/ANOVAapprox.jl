@@ -16,7 +16,7 @@ using .TestFunctionCheb
 
 rng = MersenneTwister(1234)
 
-tests = ["misc", "cheb_fista", "cheb_lsqr", "per_lsqr", "per_fista"]
+tests = ["misc", "cheb_fista", "cheb_lsqr", "per_lsqr", "per_fista","wav_lsqr"]
 #tests = ["misc", "cheb_lsqr", "per_lsqr", "per_fista"]
 
 for t in tests
