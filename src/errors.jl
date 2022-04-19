@@ -157,6 +157,7 @@ function get_L2error(a::approx, norm::Float64, bc_fun::Function, λ::Float64)::F
         return sqrt(error) / norm
     else
         error("The L2-error is not implemented for this basis")
+    end
 end
 
 @doc raw"""
