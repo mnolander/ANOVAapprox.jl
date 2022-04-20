@@ -7,7 +7,7 @@ function get_GSI(
     a::approx,
     λ::Float64;
     dict::Bool = false,
-)::Union{Vector{Float64},Dict{Vector{Int},Float64}}
+)#::Union{Vector{Float64},Dict{Vector{Int},Float64}}
     if a.basis == "wav1"
         variances = norms(a.fc[λ],1,dict=false) .^ 2
     elseif a.basis == "wav2"
@@ -17,7 +17,7 @@ function get_GSI(
     elseif a.basis == "wav4"
         variances = norms(a.fc[λ],4,dict=false) .^ 2
     else
-        variances = norms(a.fc[λ],dict=false) .^ 2
+        variances = norms(a.fc[λ]) .^ 2
     end
     variances = variances[2:end]
     variance_f = sum(variances)
@@ -33,10 +33,10 @@ function get_GSI(
         elseif a.basis == "wav4"
             variances = norms(a.fc[λ],4,dict=true)
         else
-            variances = norms(a.fc[λ],dict=true)
+            variances = norms(a.fc[λ],dict = true)
         end
 
-        return Dict((u,variances[u]^2/variance_f) for u in keys(variances))
+        return Dict{Vector{Int},Float64}(Dict((u,variances[u]^2/variance_f) for u in keys(variances)))
 
     else
         return variances ./ variance_f
@@ -51,7 +51,7 @@ This function returns the global sensitivity indices of the approximation for al
 function get_GSI(
     a::approx;
     dict::Bool = false,
-)::Dict{Float64,Union{Vector{Float64},Dict{Vector{Int},Float64}}}
+)#::Dict{Float64,Union{Vector{Float64},Dict{Vector{Int},Float64}}}
     return Dict(λ => get_GSI(a, λ, dict = dict) for λ in collect(keys(a.fc)))
 end
 
