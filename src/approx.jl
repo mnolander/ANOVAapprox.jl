@@ -4,10 +4,10 @@
 A struct to hold the scattered data function approximation.
 
 # Fields
-* `basis::String` - basis of the function space; currently choice of `"per"`, `"cos"`, `"cheb"`, and `"std"`
+* `basis::String` - basis of the function space; currently choice of `"per"`, `"cos"`, `"cheb"`,`"std"`, `"wav1"`, `"wav2"`,`"wav3"`,`"wav4"`
 * `X::Matrix{Float64}` - scattered data nodes with d rows and M columns
 * `y::Union{Vector{ComplexF64},Vector{Float64}}` - M function values (complex for `basis = "per"`, real ortherwise)
-* `U::Vector{Vector{Int}}` - a vector containing susbets of coordinate indices 
+* `U::Vector{Vector{Int}}` - a vector containing susbets of coordinate indices
 * `N::Vector{Int}` - bandwdiths for each ANOVA term
 * `trafo::GroupedTransform` - holds the grouped transformation
 * `fc::Dict{Float64,GroupedCoefficients}` - holds the GroupedCoefficients after approximation for every different regularization parameters
@@ -58,7 +58,7 @@ mutable struct approx
                 bw = N
             end
 
-            if (basis == "per") && ((minimum(X) < -0.5) || (maximum(X) >= 0.5))
+            if (basis == "per" || basis == "wav1" || basis == "wav2" || basis == "wav3" || basis == "wav4" ) && ((minimum(X) < -0.5) || (maximum(X) >= 0.5))
                 error("Nodes need to be between -0.5 and 0.5.")
             elseif (basis == "cos") && ((minimum(X) < 0) || (maximum(X) > 1))
                 error("Nodes need to be between 0 and 1.")

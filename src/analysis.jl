@@ -8,20 +8,36 @@ function get_GSI(
     λ::Float64;
     dict::Bool = false,
 )::Union{Vector{Float64},Dict{Vector{Int},Float64}}
-    variances = norms(a.fc[λ]) .^ 2
+    if a.basis == "wav1"
+        variances = norms(a.fc[λ],1,dict=false) .^ 2
+    elseif a.basis == "wav2"
+        variances = norms(a.fc[λ],2,dict=false) .^ 2
+    elseif a.basis == "wav3"
+        variances = norms(a.fc[λ],3,dict=false) .^ 2
+    elseif a.basis == "wav4"
+        variances = norms(a.fc[λ],4,dict=false) .^ 2
+    else
+        variances = norms(a.fc[λ],dict=false) .^ 2
+    end
     variances = variances[2:end]
     variance_f = sum(variances)
 
     if dict
         gsis = Dict{Vector{Int},Float64}()
-        for i = 1:length(a.fc[λ].setting)
-            s = a.fc[λ].setting[i]
-            u = s[:u]
-            if u != []
-                gsis[u] = norm(a.fc[λ][u])^2 / variance_f
-            end
+        if a.basis == "wav1"
+            variances = norms(a.fc[λ],1,dict=true)
+        elseif a.basis == "wav2"
+            variances = norms(a.fc[λ],2,dict=true)
+        elseif a.basis == "wav3"
+            variances = norms(a.fc[λ],3,dict=true)
+        elseif a.basis == "wav4"
+            variances = norms(a.fc[λ],4,dict=true)
+        else
+            variances = norms(a.fc[λ],dict=true)
         end
-        return gsis
+
+        return Dict((u,variances[u]^2/variance_f) for u in keys(variances))
+
     else
         return variances ./ variance_f
     end
@@ -53,8 +69,8 @@ function get_AttributeRanking(a::approx, λ::Float64)::Vector{Float64}
 
     factors = zeros(Int64, d, ds)
 
-    for i = 1:d 
-        for j = 1:ds 
+    for i = 1:d
+        for j = 1:ds
             for v in U
                 if (i in v) && (length(v) == j)
                     factors[i,j] += 1
@@ -92,7 +108,7 @@ function get_ActiveSet( a::approx, eps::Vector{Float64}, λ::Float64 )::Vector{V
     lengths = [ length(u) for u in U ]
     ds = maximum(lengths)
 
-    if length(eps) != ds 
+    if length(eps) != ds
         error( "Entries in vector eps have to be ds.")
     end
 
@@ -107,7 +123,7 @@ function get_ActiveSet( a::approx, eps::Vector{Float64}, λ::Float64 )::Vector{V
     end
 
     U_active = Vector{Vector{Int}}(undef, n+1)
-    U_active[1] = [] 
+    U_active[1] = []
     idx = 2
 
     for i = 1:length(gsi)
