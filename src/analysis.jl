@@ -17,7 +17,7 @@ function get_GSI(
     elseif a.basis == "wav4"
         variances = norms(a.fc[λ],4,dict=false) .^ 2
     else
-        variances = norms(a.fc[λ],dict=false) .^ 2
+        variances = norms(a.fc[λ]) .^ 2
     end
     variances = variances[2:end]
     variance_f = sum(variances)
@@ -33,7 +33,7 @@ function get_GSI(
         elseif a.basis == "wav4"
             variances = norms(a.fc[λ],4,dict=true)
         else
-            variances = norms(a.fc[λ],dict=true)
+            variances = norms(a.fc[λ],dict = true)
         end
 
         return Dict((u,variances[u]^2/variance_f) for u in keys(variances))
