@@ -36,7 +36,7 @@ function get_GSI(
             variances = norms(a.fc[λ],dict = true)
         end
 
-        return Dict{Vector{Int},Float64}(Dict((u,variances[u]^2/variance_f) for u in keys(variances)))
+        return Dict((u,variances[u]^2/variance_f) for u in keys(variances))
 
     else
         return variances ./ variance_f
@@ -52,7 +52,7 @@ function get_GSI(
     a::approx;
     dict::Bool = false,
 )::Dict{Float64,Union{Vector{Float64},Dict{Vector{Int},Float64}}}
-    return Dict{Float64,Union{Vector{Float64},Dict{Vector{Int},Float64}}}(λ => get_GSI(a, λ, dict = dict) for λ in collect(keys(a.fc)))
+    return Dict(λ => get_GSI(a, λ, dict = dict) for λ in collect(keys(a.fc)))
 end
 
 @doc raw"""
