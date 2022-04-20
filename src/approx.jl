@@ -58,7 +58,13 @@ mutable struct approx
                 bw = N
             end
 
-            if (basis == "per" || basis == "wav1" || basis == "wav2" || basis == "wav3" || basis == "wav4" ) && ((minimum(X) < -0.5) || (maximum(X) >= 0.5))
+            if (
+                basis == "per" ||
+                basis == "wav1" ||
+                basis == "wav2" ||
+                basis == "wav3" ||
+                basis == "wav4"
+            ) && ((minimum(X) < -0.5) || (maximum(X) >= 0.5))
                 error("Nodes need to be between -0.5 and 0.5.")
             elseif (basis == "cos") && ((minimum(X) < 0) || (maximum(X) > 1))
                 error("Nodes need to be between 0 and 1.")

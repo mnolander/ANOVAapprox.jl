@@ -9,13 +9,13 @@ function get_GSI(
     dict::Bool = false,
 )::Union{Vector{Float64},Dict{Vector{Int},Float64}}
     if a.basis == "wav1"
-        variances = norms(a.fc[λ],1,dict=false) .^ 2
+        variances = norms(a.fc[λ], 1, dict = false) .^ 2
     elseif a.basis == "wav2"
-        variances = norms(a.fc[λ],2,dict=false) .^ 2
+        variances = norms(a.fc[λ], 2, dict = false) .^ 2
     elseif a.basis == "wav3"
-        variances = norms(a.fc[λ],3,dict=false) .^ 2
+        variances = norms(a.fc[λ], 3, dict = false) .^ 2
     elseif a.basis == "wav4"
-        variances = norms(a.fc[λ],4,dict=false) .^ 2
+        variances = norms(a.fc[λ], 4, dict = false) .^ 2
     else
         variances = norms(a.fc[λ]) .^ 2
     end
@@ -25,18 +25,18 @@ function get_GSI(
     if dict
         gsis = Dict{Vector{Int},Float64}()
         if a.basis == "wav1"
-            variances = norms(a.fc[λ],1,dict=true)
+            variances = norms(a.fc[λ], 1, dict = true)
         elseif a.basis == "wav2"
-            variances = norms(a.fc[λ],2,dict=true)
+            variances = norms(a.fc[λ], 2, dict = true)
         elseif a.basis == "wav3"
-            variances = norms(a.fc[λ],3,dict=true)
+            variances = norms(a.fc[λ], 3, dict = true)
         elseif a.basis == "wav4"
-            variances = norms(a.fc[λ],4,dict=true)
+            variances = norms(a.fc[λ], 4, dict = true)
         else
-            variances = norms(a.fc[λ],dict = true)
+            variances = norms(a.fc[λ], dict = true)
         end
 
-        return Dict((u,variances[u]^2/variance_f) for u in keys(variances))
+        return Dict((u, variances[u]^2 / variance_f) for u in keys(variances))
 
     else
         return variances ./ variance_f
@@ -64,7 +64,7 @@ function get_AttributeRanking(a::approx, λ::Float64)::Vector{Float64}
     d = size(a.X, 1)
     gsis = get_GSI(a, λ, dict = true)
     U = collect(keys(gsis))
-    lengths = [ length(u) for u in U ]
+    lengths = [length(u) for u in U]
     ds = maximum(lengths)
 
     factors = zeros(Int64, d, ds)
@@ -73,7 +73,7 @@ function get_AttributeRanking(a::approx, λ::Float64)::Vector{Float64}
         for j = 1:ds
             for v in U
                 if (i in v) && (length(v) == j)
-                    factors[i,j] += 1
+                    factors[i, j] += 1
                 end
             end
         end
@@ -85,8 +85,8 @@ function get_AttributeRanking(a::approx, λ::Float64)::Vector{Float64}
     for u in U
         weights = 0.0
         for s in u
-            r[s] += gsis[u] * 1/factors[s, length(u)]
-            weights += 1/factors[s, length(u)]
+            r[s] += gsis[u] * 1 / factors[s, length(u)]
+            weights += 1 / factors[s, length(u)]
         end
         nf += weights * gsis[u]
     end
@@ -103,13 +103,13 @@ function get_AttributeRanking(a::approx)::Dict{Float64,Vector{Float64}}
     return Dict(λ => get_AttributeRanking(a, λ) for λ in collect(keys(a.fc)))
 end
 
-function get_ActiveSet( a::approx, eps::Vector{Float64}, λ::Float64 )::Vector{Vector{Int}}
+function get_ActiveSet(a::approx, eps::Vector{Float64}, λ::Float64)::Vector{Vector{Int}}
     U = a.U[2:end]
-    lengths = [ length(u) for u in U ]
+    lengths = [length(u) for u in U]
     ds = maximum(lengths)
 
     if length(eps) != ds
-        error( "Entries in vector eps have to be ds.")
+        error("Entries in vector eps have to be ds.")
     end
 
     gsi = get_GSI(a, λ)
@@ -122,7 +122,7 @@ function get_ActiveSet( a::approx, eps::Vector{Float64}, λ::Float64 )::Vector{V
         end
     end
 
-    U_active = Vector{Vector{Int}}(undef, n+1)
+    U_active = Vector{Vector{Int}}(undef, n + 1)
     U_active[1] = []
     idx = 2
 

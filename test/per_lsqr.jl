@@ -17,8 +17,8 @@ y_test = [TestFunctionPeriodic.f(X_test[:, i]) for i = 1:M]
 ads = ANOVAapprox.approx(X, complex(y), ds, bw, "per")
 ANOVAapprox.approximate(ads, lambda = λs)
 
-println( "AR: ", sum(ANOVAapprox.get_AttributeRanking(ads, 0.0)) )
-@test abs( sum(ANOVAapprox.get_AttributeRanking(ads, 0.0)) - 1 ) < 0.0001
+println("AR: ", sum(ANOVAapprox.get_AttributeRanking(ads, 0.0)))
+@test abs(sum(ANOVAapprox.get_AttributeRanking(ads, 0.0)) - 1) < 0.0001
 
 bw = ANOVAapprox.get_orderDependentBW(TestFunctionPeriodic.AS, [128, 32])
 

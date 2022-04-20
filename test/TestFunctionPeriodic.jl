@@ -85,7 +85,7 @@ function f(x::Vector{Float64})::Float64
         error("Argument has to be 6-dimensional")
     end
 
-    if !isempty(x[(x.>0.5).|(x.<-.5)])
+    if !isempty(x[(x.>0.5).|(x.<-0.5)])
         error("The nodes have to be between -0.5 and 0.5.")
     end
 

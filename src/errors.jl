@@ -145,7 +145,7 @@ end
 This function computes the relative ``L_2`` error of the function given the norm `norm` and a function that returns the basis coefficients `bc_fun` for regularization parameter `λ`.
 """
 function get_L2error(a::approx, norm::Float64, bc_fun::Function, λ::Float64)::Float64
-    if a.basis=="per" || a.basis == "cos" ||  a.basis =="cheb"|| a.basis == "std"
+    if a.basis == "per" || a.basis == "cos" || a.basis == "cheb" || a.basis == "std"
         error = norm^2
         index_set = get_IndexSet(a.trafo.setting, size(a.X, 1))
 
