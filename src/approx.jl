@@ -147,7 +147,7 @@ function approximate(
     end
 
     if solver == "lsqr"
-        diag_w_sqrt = sqrt(λ) .* w
+        diag_w_sqrt = sqrt(λ) .* sqrt.(w)
         if a.basis == "per"
             F_vec = LinearMap{ComplexF64}(
                 fhat -> vcat(
