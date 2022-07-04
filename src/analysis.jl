@@ -9,15 +9,15 @@ function get_variances(
     dict::Bool = false,
 )::Union{Vector{Float64},Dict{Vector{Int},Float64}}
     if a.basis == "wav1"
-        variances = norms(a.fc[λ], 1, dict = false) .^ 2
+        variances = norms(a.fc[λ], 1, dict = false)
     elseif a.basis == "wav2"
-        variances = norms(a.fc[λ], 2, dict = false) .^ 2
+        variances = norms(a.fc[λ], 2, dict = false)
     elseif a.basis == "wav3"
-        variances = norms(a.fc[λ], 3, dict = false) .^ 2
+        variances = norms(a.fc[λ], 3, dict = false)
     elseif a.basis == "wav4"
-        variances = norms(a.fc[λ], 4, dict = false) .^ 2
+        variances = norms(a.fc[λ], 4, dict = false)
     else
-        variances = norms(a.fc[λ]) .^ 2
+        variances = norms(a.fc[λ])
     end
     variances = variances[2:end]
 
