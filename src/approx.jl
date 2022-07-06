@@ -107,10 +107,11 @@ end
 
 
 @doc raw"""
-    approximate( a::approx, λ::Float64; max_iter::Int = 50, weights::Union{Vector{Float64},Nothing} = nothing, verbose::Bool = false, solver::String = "lsqr" )::Nothing
+    approximate( a::approx, λ::Float64; max_iter::Int = 50, weights::Union{Vector{Float64},Nothing} = nothing, verbose::Bool = false, solver::String = "lsqr", tol:.Float64b= 1e-8 )::Nothing
 
 This function computes the approximation for the regularization parameter ``\lambda``.
 """
+# parameter tol used only for lsqr
 function approximate(
     a::approx,
     λ::Float64;
@@ -118,6 +119,7 @@ function approximate(
     weights::Union{Vector{Float64},Nothing} = nothing,
     verbose::Bool = false,
     solver::String = "lsqr",
+    tol::Float64 = 1e-8,
 )::Nothing
     M = size(a.X, 2)
     nf = get_NumFreq(a.trafo.setting)
@@ -164,6 +166,8 @@ function approximate(
                 vcat(a.y, zeros(ComplexF64, nf)),
                 maxiter = max_iter,
                 verbose = verbose,
+                atol = tol,
+                btol = tol,
             )
             a.fc[λ] = GroupedCoefficients(a.trafo.setting, tmp)
         else
@@ -182,6 +186,8 @@ function approximate(
                 vcat(a.y, zeros(Float64, nf)),
                 maxiter = max_iter,
                 verbose = verbose,
+                atol = tol,
+                btol = tol,
             )
             a.fc[λ] = GroupedCoefficients(a.trafo.setting, tmp)
         end
