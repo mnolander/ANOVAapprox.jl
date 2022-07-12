@@ -32,7 +32,7 @@ This package provides a framework for the method ANOVAapprox to approximate high
 <li>L. Lippert, D. Potts and T. Ullrich <br> 
   <b>Fast Hyperbolic Wavelet Regression meets ANOVA</b><br>
   ArXiv: 2108.13197<br>
-  <a href="https://arxiv.org/abs/2108.13197">arXiv</a>, <a href="https://https://www-user.tu-chemnitz.de/~lipl/paper/HWR.pdf">PDF</a></li>
+  <a href="https://arxiv.org/abs/2108.13197">arXiv</a>, <a href="https://www-user.tu-chemnitz.de/~lipl/paper/HWR.pdf">PDF</a></li>
 
 
 </ul>
