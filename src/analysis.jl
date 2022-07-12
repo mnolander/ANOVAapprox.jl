@@ -8,13 +8,13 @@ function get_variances(
     λ::Float64;
     dict::Bool = false,
 )::Union{Vector{Float64},Dict{Vector{Int},Float64}}
-    if a.basis == "wav1"
+    if a.basis == "chui1"
         variances = norms(a.fc[λ], 1, dict = false)
-    elseif a.basis == "wav2"
+    elseif a.basis == "chui2"
         variances = norms(a.fc[λ], 2, dict = false)
-    elseif a.basis == "wav3"
+    elseif a.basis == "chui3"
         variances = norms(a.fc[λ], 3, dict = false)
-    elseif a.basis == "wav4"
+    elseif a.basis == "chui4"
         variances = norms(a.fc[λ], 4, dict = false)
     else
         variances = norms(a.fc[λ])
@@ -23,13 +23,13 @@ function get_variances(
 
     if dict
         gsis = Dict{Vector{Int},Float64}()
-        if a.basis == "wav1"
+        if a.basis == "chui1"
             variances = norms(a.fc[λ], 1, dict = true)
-        elseif a.basis == "wav2"
+        elseif a.basis == "chui2"
             variances = norms(a.fc[λ], 2, dict = true)
-        elseif a.basis == "wav3"
+        elseif a.basis == "chui3"
             variances = norms(a.fc[λ], 3, dict = true)
-        elseif a.basis == "wav4"
+        elseif a.basis == "chui4"
             variances = norms(a.fc[λ], 4, dict = true)
         else
             variances = norms(a.fc[λ], dict = true)
@@ -64,13 +64,13 @@ function get_GSI(
     λ::Float64;
     dict::Bool = false,
 )::Union{Vector{Float64},Dict{Vector{Int},Float64}}
-    if a.basis == "wav1"
+    if a.basis == "chui1"
         variances = norms(a.fc[λ], 1, dict = false) .^ 2
-    elseif a.basis == "wav2"
+    elseif a.basis == "chui2"
         variances = norms(a.fc[λ], 2, dict = false) .^ 2
-    elseif a.basis == "wav3"
+    elseif a.basis == "chui3"
         variances = norms(a.fc[λ], 3, dict = false) .^ 2
-    elseif a.basis == "wav4"
+    elseif a.basis == "chui4"
         variances = norms(a.fc[λ], 4, dict = false) .^ 2
     else
         variances = norms(a.fc[λ]) .^ 2
@@ -80,13 +80,13 @@ function get_GSI(
 
     if dict
         gsis = Dict{Vector{Int},Float64}()
-        if a.basis == "wav1"
+        if a.basis == "chui1"
             variances = norms(a.fc[λ], 1, dict = true)
-        elseif a.basis == "wav2"
+        elseif a.basis == "chui2"
             variances = norms(a.fc[λ], 2, dict = true)
-        elseif a.basis == "wav3"
+        elseif a.basis == "chui3"
             variances = norms(a.fc[λ], 3, dict = true)
-        elseif a.basis == "wav4"
+        elseif a.basis == "chui4"
             variances = norms(a.fc[λ], 4, dict = true)
         else
             variances = norms(a.fc[λ], dict = true)

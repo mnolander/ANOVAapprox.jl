@@ -4,7 +4,7 @@
 A struct to hold the scattered data function approximation.
 
 # Fields
-* `basis::String` - basis of the function space; currently choice of `"per"`, `"cos"`, `"cheb"`,`"std"`, `"wav1"`, `"wav2"`,`"wav3"`,`"wav4"`
+* `basis::String` - basis of the function space; currently choice of `"per"` (exponential functions), `"cos"` (cosine functions), `"cheb"` (Chebyshev basis),`"std"`(transformed exponential functions), `"chui1"` (Haar wavelets), `"chui2"` (Chui-Wang wavelets of order 2),`"chui3"`  (Chui-Wang wavelets of order 3) ,`"chui4"` (Chui-Wang wavelets of order 4)
 * `X::Matrix{Float64}` - scattered data nodes with d rows and M columns
 * `y::Union{Vector{ComplexF64},Vector{Float64}}` - M function values (complex for `basis = "per"`, real ortherwise)
 * `U::Vector{Vector{Int}}` - a vector containing susbets of coordinate indices
@@ -60,10 +60,10 @@ mutable struct approx
 
             if (
                 basis == "per" ||
-                basis == "wav1" ||
-                basis == "wav2" ||
-                basis == "wav3" ||
-                basis == "wav4"
+                basis == "chui1" ||
+                basis == "chui2" ||
+                basis == "chui3" ||
+                basis == "chui4"
             ) && ((minimum(X) < -0.5) || (maximum(X) >= 0.5))
                 error("Nodes need to be between -0.5 and 0.5.")
             elseif (basis == "cos") && ((minimum(X) < 0) || (maximum(X) > 1))
