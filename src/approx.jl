@@ -267,7 +267,7 @@ function evaluate(a::approx, λ::Float64)::Union{Vector{ComplexF64},Vector{Float
 end
 
 @doc raw"""
-    evaluate( a::approx; X::Matrix{Float64} )::Union{Vector{ComplexF64},Vector{Float64}}
+    evaluate( a::approx; X::Matrix{Float64} )::Dict{Float64,Union{Vector{ComplexF64},Vector{Float64}}}
 
 This function evaluates the approximation on the nodes `X` for all regularization parameters.
 """
@@ -285,4 +285,122 @@ This function evaluates the approximation on the nodes `a.X` for all regularizat
 """
 function evaluate(a::approx)::Dict{Float64,Union{Vector{ComplexF64},Vector{Float64}}}
     return Dict(λ => evaluate(a, λ) for λ in collect(keys(a.fc)))
+end
+
+@doc raw"""
+    evaluateANOVAterms( a::approx; X::Matrix{Float64}, λ::Float64 )::Union{Matrix{ComplexF64},Matrix{Float64}}
+
+This function evaluates the single ANOVA terms of the approximation on the nodes `X` for the regularization parameter `λ`.
+"""
+function evaluateANOVAterms(
+    a::approx,
+    X::Matrix{Float64},
+    λ::Float64,
+)::Union{Matrix{ComplexF64},Matrix{Float64}}
+
+    basis = a.basis
+
+    if (basis == "per") && ((minimum(X) < -0.5) || (maximum(X) >= 0.5))
+        error("Nodes need to be between -0.5 and 0.5.")
+    elseif (basis == "cos") && ((minimum(X) < 0) || (maximum(X) > 1))
+        error("Nodes need to be between 0 and 1.")
+    elseif (basis == "cheb") && ((minimum(X) < -1) || (maximum(X) > 1))
+        error("Nodes need to be between -1 and 1.")
+    end
+
+    Xt = copy(X)
+
+    if basis == "cos"
+        Xt ./= 2
+    elseif basis == "cheb"
+        Xt = acos.(Xt)
+        Xt ./= 2 * pi
+    elseif basis == "std"
+        Xt ./= sqrt(2)
+        Xt = erf.(Xt)
+        Xt .+= 1
+        Xt ./= 4
+    end
+    
+    if (basis == "per")
+        values = zeros(ComplexF64, size(Xt)[2], length(a.U))
+    else
+        values = zeros(Float64, size(Xt)[2], length(a.U))
+    end
+    
+    trafo = GroupedTransform(gt_systems[basis], a.U, a.N, Xt)
+
+    for j=1:length(a.U)
+        u = a.U[j]
+        values[:,j] = trafo[u] * a.fc[λ][u]
+    end
+
+    return values
+end
+
+@doc raw"""
+    evaluateANOVAterms( a::approx; X::Matrix{Float64} )::Dict{Float64,Union{Matrix{ComplexF64},Matrix{Float64}}}
+
+This function evaluates the single ANOVA terms of the approximation on the nodes `X` for all regularization parameters.
+"""
+function evaluateANOVAterms(
+    a::approx,
+    X::Matrix{Float64},
+)::Dict{Float64,Union{Matrix{ComplexF64},Matrix{Float64}}}
+    return Dict(λ => evaluateANOVAterms(a, X, λ) for λ in collect(keys(a.fc)))
+end
+
+@doc raw"""
+    evaluateSHAPterms( a::approx; X::Matrix{Float64}, λ::Float64 )::Union{Matrix{ComplexF64},Matrix{Float64}}
+
+This function evaluates for each dimension the Shapley contribution to the overall approximation on the nodes `X` for the regularization parameter `λ`.
+"""
+function evaluateSHAPterms(
+    a::approx,
+    X::Matrix{Float64},
+    λ::Float64,
+)::Union{Matrix{ComplexF64},Matrix{Float64}}
+
+    basis = a.basis
+
+    if (basis == "per") && ((minimum(X) < -0.5) || (maximum(X) >= 0.5))
+        error("Nodes need to be between -0.5 and 0.5.")
+    elseif (basis == "cos") && ((minimum(X) < 0) || (maximum(X) > 1))
+        error("Nodes need to be between 0 and 1.")
+    elseif (basis == "cheb") && ((minimum(X) < -1) || (maximum(X) > 1))
+        error("Nodes need to be between -1 and 1.")
+    end
+    
+    d = size(X)[1]
+    
+    if (basis == "per")
+        values = zeros(ComplexF64, size(X)[2], d)
+    else
+        values = zeros(Float64, size(X)[2], d)
+    end
+    
+    terms = evaluateANOVAterms(a, X, λ) # evaluates all ANOVA terms at the nodes X
+
+    for i=1:d
+        for j=1:length(a.U)
+            u = a.U[j]
+            if (i in u)
+                values[:,i] += terms[:,j]./length(u) # ANOVA terms are just equally distributed among the involved dimensions
+            end
+        end
+    end
+
+    return values
+end
+
+@doc raw"""
+    evaluateSHAPterms( a::approx; X::Matrix{Float64} )::Dict{Float64,Union{Matrix{ComplexF64},Matrix{Float64}}}
+    
+This function evaluates for each dimension the Shapley contribution to the overall approximation on the nodes `X` for all regularization parameters.
+"""
+function evaluateSHAPterms(
+    a::approx,
+    X::Matrix{Float64},
+)::Dict{Float64,Union{Matrix{ComplexF64},Matrix{Float64}}}
+    return Dict(λ => evaluateSHAPterms(a, X, λ) for λ in collect(keys(a.fc)))
 end
