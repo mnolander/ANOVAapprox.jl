@@ -1,7 +1,7 @@
 name = "ANOVAapprox"
 uuid = "5e027bd6-ab01-4733-8320-e0223e929ebb"
 authors = ["Michael Schmischke <michael.schmischke@math.tu-chemnitz.de> and Felix Bartel <felix.bartel@math.tu-chemnitz.de>"]
-version = "1.1.6"
+version = "1.1.7"
 
 [deps]
 Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
