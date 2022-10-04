@@ -322,7 +322,7 @@ function evaluateANOVAterms(
         Xt ./= 4
     end
     
-    if (basis == "per")
+    if (basis == "per") # return matrix of size N (number data points) times number of ANOVA terms
         values = zeros(ComplexF64, size(Xt)[2], length(a.U))
     else
         values = zeros(Float64, size(Xt)[2], length(a.U))
@@ -373,7 +373,7 @@ function evaluateSHAPterms(
     
     d = size(X)[1]
     
-    if (basis == "per")
+    if (basis == "per") # return matrix of size N (number of data points) times d (dimension)
         values = zeros(ComplexF64, size(X)[2], d)
     else
         values = zeros(Float64, size(X)[2], d)
