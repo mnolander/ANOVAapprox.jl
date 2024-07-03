@@ -220,6 +220,23 @@ function approximate(
 end
 
 @doc raw"""
+    approximate( a::approx; lmda::Vector{Float64} = exp.(range(0, 5, length = 5)), max_iter::Int = 50, weights::Union{Vector{Float64},Nothing} = nothing, verbose::Bool = false, solver::String = "lsqr" )::Nothing
+
+This function computes the approximation for the regularization parameters contained in `lmda`.
+"""
+function approximate(
+    a::approx;
+    lmda::Vector{Float64} = exp.(range(0, 5, length = 5)),
+    args...,
+)::Nothing
+    sort!(lmda, lt = !isless) # biggest λ will be computed first such that the initial guess 0 is somewhat good
+    for λ in lmda
+        approximate(a, λ; args...)
+    end
+    return
+end
+
+@doc raw"""
     evaluate( a::approx; X::Matrix{Float64}, λ::Float64 )::Union{Vector{ComplexF64},Vector{Float64}}
 
 This function evaluates the approximation on the nodes `X` for the regularization parameter `λ`.

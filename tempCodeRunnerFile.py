@@ -1,0 +1,1 @@
+N = np.array([100, 10, 1], dtype=np.int64)
