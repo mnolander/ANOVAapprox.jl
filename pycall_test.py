@@ -2,9 +2,9 @@ from juliacall import Main as jl
 import juliapkg
 import numpy as np
 
-# juliapkg.add("ANOVAapprox.jl", uuid="5e027bd6-ab01-4733-8320-e0223e929ebb", url="github.com/mnolander/ANOVAapprox.jl")
-juliapkg.add("ANOVAapproxPy", uuid="5e027bd6-ab01-4733-8320-e0223e929ebb", path="src/ANOVAapprox.jl")
-juliapkg.project()
+juliapkg.add("ANOVAapprox.jl", uuid="5e027bd6-ab01-4733-8320-e0223e929ebb", url="github.com/mnolander/ANOVAapprox.jl")
+# juliapkg.add("ANOVAapproxPy", uuid="5e027bd6-ab01-4733-8320-e0223e929ebb", path="../../../../Documents/Coding/Chemnitz/ANOVAapprox.jl/src/ANOVAapprox.jl")
+juliapkg.resolve()
 
 jl.seval("using ANOVAapprox")
 
