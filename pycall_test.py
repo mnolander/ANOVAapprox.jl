@@ -2,7 +2,7 @@ from juliacall import Main as jl
 import juliapkg
 import numpy as np
 
-# juliapkg.add("ANOVAapprox", uuid="5e027bd6-ab01-4733-8320-e0223e929ebb")
+juliapkg.add("ANOVAapprox", uuid="5e027bd6-ab01-4733-8320-e0223e929ebb", dev=True, url="https://github.com/mnolander/ANOVAapprox.jl.git")
 juliapkg.project()
 
 jl.seval("using ANOVAapprox")
@@ -24,14 +24,14 @@ print("N type after conversion:", type(N))
 
 approx_result = jl.ANOVAapprox.approx(X, y, U, N, "cos")
 
-# lmda = np.array([0.0, 1.0])
-lmda = 1.0
+lmda = np.array([0.0, 1.0])
+# lmda = 1.0
 
-lmda = jl.convert(jl.Float64, lmda)
+lmda = jl.convert(jl.Vector, lmda)
 
 print("lmda type after conversion:", type(lmda))
 
-jl.ANOVAapprox.approximate(approx_result, lmda)
+jl.ANOVAapprox.approximate(approx_result, lmda=lmda)
 
 # jl.seval("result = ANOVAapprox.get_orderDependentBW([[1, 2, 3], [4, 5, 6]], [3, 7, 1])")
 # jl.seval("println(result)")
