@@ -2,10 +2,11 @@ from juliacall import Main as jl
 import juliapkg
 import numpy as np
 
-juliapkg.add("ANOVAapprox.jl", uuid="5e027bd6-ab01-4733-8320-e0223e929ebb", url="github.com/mnolander/ANOVAapprox.jl")
-# juliapkg.add("ANOVAapproxPy", uuid="5e027bd6-ab01-4733-8320-e0223e929ebb", path="../../../../Documents/Coding/Chemnitz/ANOVAapprox.jl/src/ANOVAapprox.jl")
-juliapkg.resolve()
-
+# juliapkg.add("ANOVAapprox.jl", uuid="5e027bd6-ab01-4733-8320-e0223e929ebb", url="github.com/mnolander/ANOVAapprox.jl")
+# juliapkg.add("ANOVAapprox.jl", uuid="5e027bd6-ab01-4733-8320-e0223e929ebb", path="../../../../Documents/Coding/Chemnitz/ANOVAapprox.jl")
+# juliapkg.resolve()
+jl.seval("using Pkg")
+jl.seval("Pkg.add(\"github.com/mnolander/ANOVAapprox.jl\")")
 jl.seval("using ANOVAapprox")
 
 d = 3
