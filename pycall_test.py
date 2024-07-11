@@ -7,7 +7,7 @@ jl.seval("Pkg.add(url=\"https://github.com/mnolander/ANOVAapprox.jl\")")
 jl.seval("using ANOVAapprox")
 
 d = 3
-M = 10_000
+M = 100
 X = np.random.rand(d, M)
 y = np.random.rand(M)
 U = 2
@@ -21,7 +21,7 @@ approx_result = jl.ANOVAapprox.approx(X, y, U, N, "cos")
 
 lmda = np.array([0.0, 1.0])
 
-lmda_mat = np.random.rand(d, 1_000)
+lmda_mat = np.random.rand(d, 10)
 lmda_mat = jl.convert(jl.Matrix, lmda_mat)
 
 lmda = jl.convert(jl.Vector, lmda)
