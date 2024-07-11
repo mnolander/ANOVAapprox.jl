@@ -198,7 +198,7 @@ function approximate(
     else
         error("Solver not found.")
     end
-
+    println("Got through approximate")
     return
 end
 
@@ -233,7 +233,6 @@ function approximate(
     for λ in lmda
         approximate(a, λ; args...)
     end
-    println("Approximating!!!")
     return
 end
 
