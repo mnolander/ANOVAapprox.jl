@@ -17,16 +17,22 @@ X = jl.convert(jl.Matrix, X)
 y = jl.convert(jl.Vector, y)
 N = jl.convert(jl.Vector, N)
 
-print("X type after conversion:", type(X))
-print("y type after conversion:", type(y))
-print("N type after conversion:", type(N))
-
 approx_result = jl.ANOVAapprox.approx(X, y, U, N, "cos")
 
 lmda = np.array([0.0, 1.0])
 
+lmda_mat = np.random.rand(d, 1_000)
+lmda_mat = jl.convert(jl.Matrix, lmda_mat)
+
 lmda = jl.convert(jl.Vector, lmda)
-print("lmda type after conversion:", type(lmda))
 
 jl.ANOVAapprox.approximate(approx_result, lmda=lmda)
 
+eval_output = jl.ANOVAapprox.evaluate(approx_result, lmda_mat)
+print("evaluate() output:", eval_output)
+
+eval_anova_output = jl.ANOVAapprox.evaluateANOVAterms(approx_result, lmda_mat)
+print("evaluateANOVAterms() output:", eval_anova_output)
+
+eval_shap_output = jl.ANOVAapprox.evaluateSHAPterms(approx_result, lmda_mat)
+print("evaluateSHAPterms() output:", eval_shap_output)

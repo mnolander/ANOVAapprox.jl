@@ -198,7 +198,6 @@ function approximate(
     else
         error("Solver not found.")
     end
-    println("Got through approximate")
     return
 end
 
