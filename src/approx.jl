@@ -106,101 +106,101 @@ function approx(
 end
 
 
-# @doc raw"""
-#     approximate( a::approx, λ::Float64; max_iter::Int = 50, weights::Union{Vector{Float64},Nothing} = nothing, verbose::Bool = false, solver::String = "lsqr", tol:.Float64b= 1e-8 )::Nothing
+@doc raw"""
+    approximate( a::approx, λ::Float64; max_iter::Int = 50, weights::Union{Vector{Float64},Nothing} = nothing, verbose::Bool = false, solver::String = "lsqr", tol:.Float64b= 1e-8 )::Nothing
 
-# This function computes the approximation for the regularization parameter ``\lambda``.
-# """
-# # parameter tol used only for lsqr
-# function approximate(
-#     a::approx,
-#     λ::Float64;
-#     max_iter::Int = 50,
-#     weights::Union{Vector{Float64},Nothing} = nothing,
-#     verbose::Bool = false,
-#     solver::String = "lsqr",
-#     tol::Float64 = 1e-8,
-# )::Nothing
-#     M = size(a.X, 2)
-#     nf = get_NumFreq(a.trafo.setting)
+This function computes the approximation for the regularization parameter ``\lambda``.
+"""
+# parameter tol used only for lsqr
+function approximate(
+    a::approx,
+    λ::Float64;
+    max_iter::Int = 50,
+    weights::Union{Vector{Float64},Nothing} = nothing,
+    verbose::Bool = false,
+    solver::String = "lsqr",
+    tol::Float64 = 1e-8,
+)::Nothing
+    M = size(a.X, 2)
+    nf = get_NumFreq(a.trafo.setting)
 
-#     w = ones(Float64, nf)
+    w = ones(Float64, nf)
 
-#     if !isnothing(weights)
-#         if (length(weights) != nf) || (minimum(weights) < 1)
-#             error("Weight requirements not fulfilled.")
-#         else
-#             w = weights
-#         end
-#     end
+    if !isnothing(weights)
+        if (length(weights) != nf) || (minimum(weights) < 1)
+            error("Weight requirements not fulfilled.")
+        else
+            w = weights
+        end
+    end
 
-#     if a.basis == "per"
-#         what = GroupedCoefficients(a.trafo.setting, complex(w))
-#     else
-#         what = GroupedCoefficients(a.trafo.setting, w)
-#     end
+    if a.basis == "per"
+        what = GroupedCoefficients(a.trafo.setting, complex(w))
+    else
+        what = GroupedCoefficients(a.trafo.setting, w)
+    end
 
-#     λs = collect(keys(a.fc))
-#     tmp = zeros(types[a.basis], nf)
+    λs = collect(keys(a.fc))
+    tmp = zeros(types[a.basis], nf)
 
-#     if length(λs) != 0
-#         idx = argmin(λs .- λ)
-#         tmp = copy(a.fc[λs[idx]].data)
-#     end
+    if length(λs) != 0
+        idx = argmin(λs .- λ)
+        tmp = copy(a.fc[λs[idx]].data)
+    end
 
-#     if solver == "lsqr"
-#         diag_w_sqrt = sqrt(λ) .* sqrt.(w)
-#         if a.basis == "per"
-#             F_vec = LinearMap{ComplexF64}(
-#                 fhat -> vcat(
-#                     a.trafo * GroupedCoefficients(a.trafo.setting, fhat),
-#                     diag_w_sqrt .* fhat,
-#                 ),
-#                 f -> vec(a.trafo' * f[1:M]) + diag_w_sqrt .* f[M+1:end],
-#                 M + nf,
-#                 nf,
-#             )
-#             lsqr!(
-#                 tmp,
-#                 F_vec,
-#                 vcat(a.y, zeros(ComplexF64, nf)),
-#                 maxiter = max_iter,
-#                 verbose = verbose,
-#                 atol = tol,
-#                 btol = tol,
-#             )
-#             a.fc[λ] = GroupedCoefficients(a.trafo.setting, tmp)
-#         else
-#             F_vec = LinearMap{Float64}(
-#                 fhat -> vcat(
-#                     a.trafo * GroupedCoefficients(a.trafo.setting, fhat),
-#                     diag_w_sqrt .* fhat,
-#                 ),
-#                 f -> vec(a.trafo' * f[1:M]) + diag_w_sqrt .* f[M+1:end],
-#                 M + nf,
-#                 nf,
-#             )
-#             lsqr!(
-#                 tmp,
-#                 F_vec,
-#                 vcat(a.y, zeros(Float64, nf)),
-#                 maxiter = max_iter,
-#                 verbose = verbose,
-#                 atol = tol,
-#                 btol = tol,
-#             )
-#             a.fc[λ] = GroupedCoefficients(a.trafo.setting, tmp)
-#         end
-#     elseif solver == "fista"
-#         ghat = GroupedCoefficients(a.trafo.setting, tmp)
-#         fista!(ghat, a.trafo, a.y, λ, what, max_iter = max_iter)
-#         a.fc[λ] = ghat
-#     else
-#         error("Solver not found.")
-#     end
+    if solver == "lsqr"
+        diag_w_sqrt = sqrt(λ) .* sqrt.(w)
+        if a.basis == "per"
+            F_vec = LinearMap{ComplexF64}(
+                fhat -> vcat(
+                    a.trafo * GroupedCoefficients(a.trafo.setting, fhat),
+                    diag_w_sqrt .* fhat,
+                ),
+                f -> vec(a.trafo' * f[1:M]) + diag_w_sqrt .* f[M+1:end],
+                M + nf,
+                nf,
+            )
+            lsqr!(
+                tmp,
+                F_vec,
+                vcat(a.y, zeros(ComplexF64, nf)),
+                maxiter = max_iter,
+                verbose = verbose,
+                atol = tol,
+                btol = tol,
+            )
+            a.fc[λ] = GroupedCoefficients(a.trafo.setting, tmp)
+        else
+            F_vec = LinearMap{Float64}(
+                fhat -> vcat(
+                    a.trafo * GroupedCoefficients(a.trafo.setting, fhat),
+                    diag_w_sqrt .* fhat,
+                ),
+                f -> vec(a.trafo' * f[1:M]) + diag_w_sqrt .* f[M+1:end],
+                M + nf,
+                nf,
+            )
+            lsqr!(
+                tmp,
+                F_vec,
+                vcat(a.y, zeros(Float64, nf)),
+                maxiter = max_iter,
+                verbose = verbose,
+                atol = tol,
+                btol = tol,
+            )
+            a.fc[λ] = GroupedCoefficients(a.trafo.setting, tmp)
+        end
+    elseif solver == "fista"
+        ghat = GroupedCoefficients(a.trafo.setting, tmp)
+        fista!(ghat, a.trafo, a.y, λ, what, max_iter = max_iter)
+        a.fc[λ] = ghat
+    else
+        error("Solver not found.")
+    end
 
-#     return
-# end
+    return
+end
 
 # @doc raw"""
 #     approximate( a::approx; lambda::Vector{Float64} = exp.(range(0, 5, length = 5)), max_iter::Int = 50, weights::Union{Vector{Float64},Nothing} = nothing, verbose::Bool = false, solver::String = "lsqr" )::Nothing
